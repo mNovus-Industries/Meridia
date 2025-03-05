@@ -147,7 +147,7 @@ const ContentSection = React.memo((props: any) => {
           <span>
             <p>Settings</p>
             <code>
-              <kbd>Ctrl</kbd> + <kbd>`</kbd>
+              <kbd>Ctrl</kbd> + <kbd>,</kbd>
             </code>
           </span>
         </div>
