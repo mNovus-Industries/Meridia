@@ -119,7 +119,7 @@ Currently, Meridia does not support extensions or mods. However, modding functio
 
 ## Contributing
 
-We welcome contributions! If you would like to contribute to Meridia, check out our `CONTRIBUTING.md` file for guidelines.
+We welcome contributions! If you would like to contribute to Meridia.
 
 When submitting a pull request:
 - Use descriptive titles, such as `Add feature X` or `Fix bug Y`.
@@ -137,5 +137,4 @@ If you encounter an issue or have an idea for a new feature, feel free to report
 ---
 
 ### Quick Links:
-- [Issues Page](https://github.com/Ridit-ManojKhandelwal/Meridia/issues)
-- [Contribution Guidelines](CONTRIBUTING.md)
+- [Issues Page](https://github.com/mNovus-Industries//Meridia/issues)
