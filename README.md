@@ -68,7 +68,7 @@ To get started with Meridia locally, follow these steps:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/Ridit-ManojKhandelwal/Meridia.git
+git clone https://github.com/mNovus-Industries/Meridia.git
 ```
 
 ### 2. Navigate to Project Directory
@@ -85,7 +85,7 @@ Run the following command to install all the required dependencies:
 yarn install
 ```
 
-### 4. Rebuild Dependencies (Needed)*
+### 4. Rebuild Dependencies*
 Rebuild any dependencies (necessary)*:
 
 ```bash
