@@ -68,7 +68,7 @@ To get started with Meridia locally, follow these steps:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/Ridit-ManojKhandelwal/Meridia.git
+git clone https://github.com/mNovus-Industries/Meridia.git
 ```
 
 ### 2. Navigate to Project Directory
@@ -85,7 +85,7 @@ Run the following command to install all the required dependencies:
 yarn install
 ```
 
-### 4. Rebuild Dependencies (Needed)*
+### 4. Rebuild Dependencies*
 Rebuild any dependencies (necessary)*:
 
 ```bash
@@ -119,7 +119,7 @@ Currently, Meridia does not support extensions or mods. However, modding functio
 
 ## Contributing
 
-We welcome contributions! If you would like to contribute to Meridia, check out our `CONTRIBUTING.md` file for guidelines.
+We welcome contributions! If you would like to contribute to Meridia.
 
 When submitting a pull request:
 - Use descriptive titles, such as `Add feature X` or `Fix bug Y`.
@@ -137,5 +137,4 @@ If you encounter an issue or have an idea for a new feature, feel free to report
 ---
 
 ### Quick Links:
-- [Issues Page](https://github.com/Ridit-ManojKhandelwal/Meridia/issues)
-- [Contribution Guidelines](CONTRIBUTING.md)
+- [Issues Page](https://github.com/mNovus-Industries//Meridia/issues)
