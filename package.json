@@ -18,8 +18,7 @@
     "format": "npm run prettier",
     "build": "webpack --config webpack.config.js",
     "dev": "webpack serve --mode development",
-    "postinstall": "electron-rebuild",
-    "prepack": "electron-rebuild"
+    "postinstall": "electron-rebuild"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
