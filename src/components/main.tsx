@@ -31,57 +31,59 @@ const MainComponent = React.memo((props: any) => {
 
   const pythonLangFeature: any = pythonLangData;
 
-  // useEffect(() => {
-  //   monaco.languages.registerCompletionItemProvider("python", {
-  //     provideCompletionItems: (model, position) => {
-  //       const word = model.getWordUntilPosition(position);
-  //       const range = new monaco.Range(
-  //         position.lineNumber,
-  //         word.startColumn,
-  //         position.lineNumber,
-  //         word.endColumn
-  //       );
+  useEffect(() => {
+    monaco.languages.registerCompletionItemProvider("python", {
+      provideCompletionItems: (model, position) => {
+        const word = model.getWordUntilPosition(position);
+        const range = new monaco.Range(
+          position.lineNumber,
+          word.startColumn,
+          position.lineNumber,
+          word.endColumn
+        );
 
-  //       const suggestions = [
-  //         ...pythonLangFeature.keywords.map((keyword: any) => ({
-  //           label: keyword,
-  //           kind: monaco.languages.CompletionItemKind.Keyword,
-  //           insertText: keyword,
-  //           detail: "Python Keyword",
-  //           range: range,
-  //         })),
+        const suggestions = [
+          ...pythonLangFeature.keywords.map((keyword: any) => ({
+            label: keyword,
+            kind: monaco.languages.CompletionItemKind.Keyword,
+            insertText: keyword,
+            detail: "Python Keyword",
+            range: range,
+          })),
 
-  //         ...pythonLangFeature.builtins.map((builtin: any) => ({
-  //           label: builtin,
-  //           kind: monaco.languages.CompletionItemKind.Function,
-  //           insertText: builtin,
-  //           detail: "Python Built-in",
-  //           range: range,
-  //         })),
+          ...pythonLangFeature.builtins.map((builtin: any) => ({
+            label: builtin,
+            kind: monaco.languages.CompletionItemKind.Function,
+            insertText: builtin,
+            detail: "Python Built-in",
+            range: range,
+          })),
 
-  //         ...Object.keys(pythonLangData.snippets).map((key) => {
-  //           const snippet = pythonLangFeature.snippets[key];
-  //           return {
-  //             label: snippet.prefix,
-  //             kind: monaco.languages.CompletionItemKind.Snippet,
-  //             insertText: Array.isArray(snippet.body)
-  //               ? snippet.body.join("\n")
-  //               : snippet.body,
-  //             insertTextRules:
-  //               monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-  //             detail: snippet.description,
-  //             range: range,
-  //           };
-  //         }),
-  //       ];
+          ...Object.keys(pythonLangData.snippets).map((key) => {
+            const snippet = pythonLangFeature.snippets[key];
+            return {
+              label: snippet.prefix,
+              kind: monaco.languages.CompletionItemKind.Snippet,
+              insertText: Array.isArray(snippet.body)
+                ? snippet.body.join("\n")
+                : snippet.body,
+              insertTextRules:
+                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              detail: snippet.description,
+              range: range,
+            };
+          }),
+        ];
 
-  //       return { suggestions };
-  //     },
-  //   });
-  // }, []);
+        return { suggestions };
+      },
+    });
+  }, []);
 
   const handle_set_editor = React.useCallback(
     async (selected_file: TSelectedFile) => {
+      console.log("selected file", selected_file);
+
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         jsx: 4,
         baseUrl: selected_file.path.split(/\\|\//g).at(-1),
@@ -100,31 +102,19 @@ const MainComponent = React.memo((props: any) => {
         base: "vs-dark",
       });
 
-      // const pyrightProvider = new MonacoPyrightProvider("./worker.js", {
-      //   typeStubs: {
-      //     user_mod: {
-      //       "__init__.pyi": `def user_func(a: int, b: str) -> float: ...`,
-      //     },
-      //   },
-      // });
-
-      // await pyrightProvider.init(monaco);
-
-      // await pyrightProvider.setupDiagnostics(editor_ref.current);
-
-      // console.log("client", await pyrightProvider.lspClient);
-
       if (!editor_ref.current) {
         editor_ref.current = monaco.editor.create(
           document.querySelector(".editor-container"),
           {
             theme: settings.theme,
             language: get_file_types(selected_file.name),
-
             fontSize: settings.fontSize,
             fontFamily: settings.fontFamily,
             cursorBlinking: settings.cursorBlinking,
             cursorSmoothCaretAnimation: settings.cursorSmoothCaretAnimation,
+            insertSpaces: true,
+            tabSize: 4,
+            detectIndentation: false,
             minimap: settings.minimap,
             quickSuggestions: settings.quickSuggestions,
             wordBasedSuggestions: settings.wordBasedSuggestions,

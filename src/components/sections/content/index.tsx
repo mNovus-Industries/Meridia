@@ -108,6 +108,8 @@ const ContentSection = React.memo((props: any) => {
   const handleMiddleClick = (e: any, file: any) => {
     if (e.button === 1) {
       e.preventDefault();
+      e.stopPropagation();
+      document.body.style.cursor = "default";
       handleRemoveFile(e, file);
     }
   };

@@ -1,6 +1,6 @@
 import os from "os";
 
-import * as pty from "node-pty";
+import * as pty from "node-pty-prebuilt-multiarch";
 
 import { mainWindow } from "..";
 

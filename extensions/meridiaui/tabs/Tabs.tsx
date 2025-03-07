@@ -62,13 +62,13 @@ export const Tabs = ({
   };
 
   return (
-    <div id="anant-tab-theme-mode">
-      <div className="anant-tabs-wrapper">
-        <div className="anant-tabs">
+    <div id="meridia-tab-theme-mode">
+      <div className="meridia-tabs-wrapper">
+        <div className="meridia-tabs">
           {tabs?.map((item) => (
             <div
               key={item.key}
-              className={`anant-tab ${activeManualTab ? activeManualTab === item.key && "anant-tab-active" : activeTab === item.key && "anant-tab-active"}`}
+              className={`meridia-tab ${activeManualTab ? activeManualTab === item.key && "meridia-tab-active" : activeTab === item.key && "meridia-tab-active"}`}
               onClick={() => {
                 setActiveTab(item.key);
                 item.onTabClick();
@@ -83,7 +83,7 @@ export const Tabs = ({
               {item.closable && (
                 <button
                   key={item.key}
-                  className="anant-close-btn"
+                  className="meridia-close-btn"
                   onClick={() => removeTab(item.key)}
                 >
                   <CloseOutlined />
@@ -93,19 +93,19 @@ export const Tabs = ({
           ))}
         </div>
 
-        <div className="anant-tabs-buttons">
+        <div className="meridia-tabs-buttons">
           {addTabButton && (
             <Tooltip text="Add Tab">
-              <button className="anant-add-tab-btn" onClick={addTab}>
+              <button className="meridia-add-tab-btn" onClick={addTab}>
                 {addTabButtonText === "" && <PlusOutlined />}
               </button>
             </Tooltip>
           )}
 
           {customButtons.length > 0 && (
-            <div className="anant-custom-buttons">
+            <div className="meridia-custom-buttons">
               {customButtons.map((button, index) => (
-                <div key={index} className="anant-custom-button">
+                <div key={index} className="meridia-custom-button">
                   <Tooltip text={customButtonsTooltip[index]} position="left">
                     {button}
                   </Tooltip>

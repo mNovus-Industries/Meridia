@@ -5,16 +5,16 @@
   --tab-hover-color: #d1d1d1;
 }
 
-.dark .anant-tabs-wrapper {
+.dark .meridia-tabs-wrapper {
   --tab-text-color: #abb2bf;
   --tab-active-bg: #fff;
   --tab-hover-bg: #444;
   --tab-hover-color: #fff;
 }
 
-.anant-tabs-wrapper,
-.anant-tab,
-.anant-tabs,
+.meridia-tabs-wrapper,
+.meridia-tab,
+.meridia-tabs,
 .active {
   transition:
     color 0.2s,
@@ -22,21 +22,22 @@
     border 0.2s;
 }
 
-.anant-tabs-wrapper {
+.meridia-tabs-wrapper {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #4a4a4a;
 }
 
-.anant-tabs-wrapper .anant-tabs {
+.meridia-tabs-wrapper .meridia-tabs {
   display: flex;
 }
 
-.anant-tabs-wrapper .anant-tabs .anant-tab {
+.meridia-tabs-wrapper .meridia-tabs .meridia-tab {
   display: flex;
   align-items: center;
-  margin: 12px 4px;
-  padding: 12px;
+  margin: 0 4px;
+  margin-top: 6px;
+  padding: 16px 12px;
   transition:
     background 0.2s,
     color 0.2s;
@@ -45,34 +46,34 @@
   height: 10px;
 }
 
-.anant-tabs-wrapper .anant-tabs .anant-tab:hover {
+.meridia-tabs-wrapper .meridia-tabs .meridia-tab:hover {
   color: var(--tab-hover-color);
 }
 
-.anant-tabs-wrapper .anant-tabs .anant-tab button {
+.meridia-tabs-wrapper .meridia-tabs .meridia-tab button {
   background: transparent;
   border: none;
   cursor: pointer;
 }
 
-.anant-tabs-wrapper .anant-tabs .anant-tab button:hover svg {
+.meridia-tabs-wrapper .meridia-tabs .meridia-tab button:hover svg {
   fill: var(--tab-hover-color);
 }
 
-.anant-tabs-wrapper .anant-tabs .anant-tab button svg {
+.meridia-tabs-wrapper .meridia-tabs .meridia-tab button svg {
   fill: var(--tab-text-color);
 }
 
-.anant-tabs-wrapper .anant-tabs .anant-tab-active {
+.meridia-tabs-wrapper .meridia-tabs .meridia-tab-active {
   background: #2e2d2d;
-  border-radius: 8px;
+  border-radius: 12px 12px 0 0;
 }
 
-.anant-tabs-wrapper .anant-tabs .active button svg {
+.meridia-tabs-wrapper .meridia-tabs .active button svg {
   fill: var(--tab-active-bg);
 }
 
-.anant-tabs-wrapper .anant-add-tab-btn {
+.meridia-tabs-wrapper .meridia-add-tab-btn {
   background: transparent;
   border: none;
   color: var(--tab-text-color);
@@ -80,17 +81,17 @@
   cursor: pointer;
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons {
+.meridia-tabs-wrapper .meridia-tabs-buttons {
   display: flex;
   align-items: center;
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-buttons {
+.meridia-tabs-wrapper .meridia-tabs-buttons .meridia-custom-buttons {
   display: flex;
   align-items: center;
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-button button {
+.meridia-tabs-wrapper .meridia-tabs-buttons .meridia-custom-button button {
   background: transparent;
   color: var(--tab-text-color);
   font-size: 16px;
@@ -98,19 +99,22 @@
   cursor: pointer;
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-button:first-child {
+.meridia-tabs-wrapper .meridia-tabs-buttons .meridia-custom-button:first-child {
   border-right: 1px solid var(--tab-text-color);
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-button button:hover {
+.meridia-tabs-wrapper
+  .meridia-tabs-buttons
+  .meridia-custom-button
+  button:hover {
   color: var(--tab-hover-color);
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons .anant-add-tab-btn svg {
+.meridia-tabs-wrapper .meridia-tabs-buttons .meridia-add-tab-btn svg {
   width: 20px;
   height: 20px;
 }
 
-.anant-tabs-wrapper .anant-tabs-buttons .anant-add-tab-btn:hover {
+.meridia-tabs-wrapper .meridia-tabs-buttons .meridia-add-tab-btn:hover {
   color: var(--tab-hover-color);
 }

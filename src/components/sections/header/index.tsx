@@ -276,7 +276,11 @@ export default function Header() {
       <div className="controls">
         <Tooltip text="Run ( F12 )">
           <button onClick={handleRun} ref={runRef} className="run-tool">
-            <CaretRightOutlined />
+            <CaretRightOutlined
+              style={{
+                fontSize: "24px",
+              }}
+            />
           </button>
         </Tooltip>
 

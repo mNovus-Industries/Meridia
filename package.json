@@ -6,7 +6,7 @@
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package",
+    "package": "NODE_OPTIONS=--max-old-space-size=8192 electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "rebuild": "electron-rebuild",
@@ -96,7 +96,7 @@
     "monaco-pyright-lsp": "^0.1.7",
     "monaco-python": "^0.1.9",
     "node-gyp": "^11.1.0",
-    "node-pty": "^1.0.0",
+    "node-pty-prebuilt-multiarch": "^0.10.1-pre.5",
     "npm": "^11.1.0",
     "path-browserify": "^1.0.1",
     "postcss": "^8.5.3",

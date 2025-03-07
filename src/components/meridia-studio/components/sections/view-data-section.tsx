@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { ReactComponent as SearchIcon } from "../../../../assets/svg/search.svg";
 import { tags } from "../../backend/tags";
 import { types } from "../../backend/types";
+
+import { ReactComponent as SearchIcon } from "../../../../assets/svg/search.svg";
 
 interface ViewDataSectionProps {
   setStep: (step: number) => void;
@@ -18,11 +19,11 @@ export const ViewDataSection = ({ setStep, setData }: ViewDataSectionProps) => {
   const getVars = async () => {
     const vars = await window.electron.get_data_studio_variables();
     console.log("got vars", vars);
-    setVars(vars || []); // Ensure vars is an array
+    setVars(vars || []);
   };
 
-  useEffect(() => {
-    window.electron.set_data_studio_variables([
+  const setFileVars = async () => {
+    await window.electron.set_data_studio_variables([
       {
         name: "One",
         type: "excel",
@@ -60,6 +61,10 @@ export const ViewDataSection = ({ setStep, setData }: ViewDataSectionProps) => {
         path: "/home/ridit/Downloads/",
       },
     ]);
+  };
+
+  useEffect(() => {
+    setFileVars();
     getVars();
 
     console.log("got vars", vars);
@@ -169,69 +174,70 @@ export const ViewDataSection = ({ setStep, setData }: ViewDataSectionProps) => {
           gap: "16px",
         }}
       >
-        {vars.map((value) => {
-          if (currentType && value.type === currentType) {
-            return (
-              <div
-                className="view-datatype"
-                onClick={() => {
-                  setStep(3);
-                  setData(value);
-                }}
-              >
-                <div>
-                  <span>{types.map((type: any) => type[value.type])}</span>
-                  <p>{value.name}</p>
+        {/* {vars !== undefined &&
+          vars?.map((value) => {
+            if (currentType && value.type === currentType) {
+              return (
+                <div
+                  className="view-datatype"
+                  onClick={() => {
+                    setStep(3);
+                    setData(value);
+                  }}
+                >
+                  <div>
+                    <span>{types.map((type: any) => type[value.type])}</span>
+                    <p>{value.name}</p>
+                  </div>
+                  <p>{tags.map((tag: any) => tag[value.type])}</p>
                 </div>
-                <p>{tags.map((tag: any) => tag[value.type])}</p>
-              </div>
-            );
-          }
+              );
+            }
 
-          if (
-            searchQuery.length === 1
-              ? searchQuery.startsWith(value.name[0])
-              : searchQuery.length === value.name.length
-                ? searchQuery.startsWith(value.name[0]) &&
-                  searchQuery.endsWith(value.name[-1])
-                : searchQuery.endsWith(value.name[-1])
-          ) {
-            return (
-              <div
-                className="view-datatype"
-                onClick={() => {
-                  setStep(3);
-                  setData(value);
-                }}
-              >
-                <h1>Result</h1>
-                <div>
-                  <span>{types.map((type: any) => type[value.type])}</span>
-                  <p>{value.name}</p>
+            if (
+              searchQuery.length === 1
+                ? searchQuery.startsWith(value.name[0])
+                : searchQuery.length === value.name.length
+                  ? searchQuery.startsWith(value.name[0]) &&
+                    searchQuery.endsWith(value.name[-1])
+                  : searchQuery.endsWith(value.name[-1])
+            ) {
+              return (
+                <div
+                  className="view-datatype"
+                  onClick={() => {
+                    setStep(3);
+                    setData(value);
+                  }}
+                >
+                  <h1>Result</h1>
+                  <div>
+                    <span>{types.map((type: any) => type[value.type])}</span>
+                    <p>{value.name}</p>
+                  </div>
+                  <p>{tags.map((tag: any) => tag[value.type])}</p>
                 </div>
-                <p>{tags.map((tag: any) => tag[value.type])}</p>
-              </div>
-            );
-          }
+              );
+            }
 
-          if (!currentType) {
-            return (
-              <div
-                className="view-datatype"
-                onClick={() => {
-                  setStep(3);
-                  setData(value);
-                }}
-              >
-                <div>
-                  <span>{types.map((type: any) => type[value.type])}</span>
-                  <p>{value.name}</p>
+            if (!currentType) {
+              return (
+                <div
+                  className="view-datatype"
+                  onClick={() => {
+                    setStep(3);
+                    setData(value);
+                  }}
+                >
+                  <div>
+                    <span>{types.map((type: any) => type[value.type])}</span>
+                    <p>{value.name}</p>
+                  </div>
+                  <p>{tags.map((tag: any) => tag[value.type])}</p>
                 </div>
-                <p>{tags.map((tag: any) => tag[value.type])}</p>
-              </div>
-            );
-          }
-        })}
+              );
+            }
+          })} */}
       </div>
     </div>
   );

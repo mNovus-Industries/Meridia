@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { ipcMain, ipcRenderer } from "electron";
 
 import { IEditorSettings, IUI, IUIState } from "../../src/shared/types";
 
@@ -107,6 +107,23 @@ export const renderer = {
     try {
       ipcRenderer.invoke("run-code", data);
     } catch {}
+  },
+
+  delete_file: (data: { path: string; rootPath: string }) => {
+    ipcRenderer.send("delete-file", data);
+  },
+
+  delete_folder: (data: { path: string; rootPath: string }) => {
+    ipcRenderer.send("delete-folder", data);
+  },
+
+  rename: (data: {
+    newName: string;
+    path: string;
+    rootPath: string;
+    containingFolder: string;
+  }) => {
+    ipcRenderer.send("rename", data);
   },
 
   ipcRenderer: {

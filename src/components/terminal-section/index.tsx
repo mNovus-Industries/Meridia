@@ -5,15 +5,15 @@ import "@xterm/xterm/css/xterm.css";
 
 export const Terminal = () => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
-  const terminalInstance = useRef(null);
-  const fitAddon = useRef(null);
+  const terminalInstance = useRef<XTerminal | null>(null);
+  const fitAddon = useRef<FitAddon | null>(null);
 
   useEffect(() => {
     if (!terminalRef.current || terminalInstance.current) return;
 
     const term = new XTerminal({
       cursorBlink: true,
-      fontFamily: "Cascadia Code, monospace",
+      fontFamily: "JetBrains Mono, monospace",
       fontSize: 14,
       letterSpacing: 0,
       lineHeight: 1.4,
@@ -39,32 +39,30 @@ export const Terminal = () => {
         brightWhite: "#e5e5e5",
       },
     });
+
     const fit = new FitAddon();
+    terminalInstance.current = term;
     fitAddon.current = fit;
     term.loadAddon(fit);
     term.open(terminalRef.current);
-    fit.fit();
-    terminalInstance.current = term;
 
     window.electron.ipcRenderer.send("terminal.keystroke", "\r");
 
-    const sendResizeRequest = () => {
-      if (terminalInstance.current) {
-        const { cols, rows } = terminalInstance.current;
-        window.electron.ipcRenderer.send("terminal.resize", { cols, rows });
-      }
-    };
+    // Delay the fit call slightly to ensure terminal is fully rendered
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        if (fitAddon.current && terminalRef.current?.offsetWidth) {
+          fitAddon.current.fit();
+        }
+      });
+    }, 50);
 
-    sendResizeRequest();
-
+    // Resize handling
     const handleResize = () => {
       if (fitAddon.current) {
         fitAddon.current.fit();
-        sendResizeRequest();
       }
     };
-
-    terminalRef.current.addEventListener("resize", handleResize);
 
     window.addEventListener("resize", handleResize);
 
@@ -94,7 +92,7 @@ export const Terminal = () => {
     <div
       ref={terminalRef}
       className="terminal"
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%", display: "flex" }}
     />
   );
 };

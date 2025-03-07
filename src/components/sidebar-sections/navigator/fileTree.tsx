@@ -14,10 +14,10 @@ function FileTree({
   onFileClick,
 }: {
   fileTree: any;
-  handleAddFile: ({}, {}) => void;
-  handleAddFolder: ({}, {}) => void;
-  handleDelete: ({}) => void;
-  handleRename: ({}, {}) => void;
+  handleAddFile: ({}, {}, {}, {}) => void;
+  handleAddFolder: ({}, {}, {}, {}) => void;
+  handleDelete: ({}, {}, {}) => void;
+  handleRename: ({}, {}, {}, {}) => void;
   onFileClick: ({}, {}) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(fileTree.name === fileTree.root);
@@ -44,7 +44,14 @@ function FileTree({
       isRenaming.name !== isRenaming.newName &&
       isRenaming.newName.trim() !== ""
     ) {
-      handleRename(isRenaming.id, isRenaming.newName);
+      handleRename(
+        isRenaming.id,
+        isRenaming.newName,
+        fileTree.path,
+        fileTree.root === fileTree.name
+          ? fileTree.root
+          : fileTree.containingFolderPath
+      );
     }
     setIsRenaming({
       showInput: false,
@@ -61,6 +68,84 @@ function FileTree({
     }
   }, [isRenaming.showInput]);
 
+  useEffect(() => {
+    const { ipcRenderer } = window.electron;
+
+    const handleNewFile = (
+      _e: any,
+      data: { fullPath: string; containingFolder: string; fileName: string }
+    ) => {
+      if (!fileTree?.children) {
+        console.warn("⚠️ File tree data not loaded yet.");
+        return;
+      }
+
+      console.log("📄 File added:", data);
+      console.log("🧐 Searching for containing folder in:", fileTree.children);
+
+      // Filter only folders before searching
+      const folderNodes = fileTree.children.filter(
+        (node: any) => node.type === "folder"
+      );
+
+      console.log("🔍 Searching in these folder nodes:", folderNodes);
+
+      console.log("strucute", fileTree);
+
+      // Find the parent folder
+      const parentFolder = folderNodes.find(
+        (node: any) => node.path === data.containingFolder
+      );
+
+      console.log("searching parentFolder", parentFolder);
+
+      if (parentFolder) {
+        console.log("✅ Found containing folder:");
+        console.log("📂 Folder ID:", parentFolder.id);
+        console.log("📂 Folder Name:", parentFolder.name);
+      } else {
+        console.warn("⚠️ Containing folder not found in file tree.");
+      }
+    };
+
+    const handleFileRemoved = (_e: any, path: string) => {
+      console.log("File removed:", path);
+    };
+
+    const handleNewFolder = (_e: any, path: string) => {
+      if (!fileTree?.children) {
+        console.warn("File tree data not loaded yet.");
+        return;
+      }
+      console.log(fileTree.children.filter((node: any) => node.path === path));
+    };
+
+    const handleFolderRemoved = (_e: any, path: string) => {
+      console.log("Folder removed:", path);
+    };
+
+    const handleRename = (
+      _e: any,
+      { oldPath, newPath }: { oldPath: string; newPath: string }
+    ) => {
+      console.log("Renamed:", oldPath, "->", newPath);
+    };
+
+    ipcRenderer.on("new-file-created", handleNewFile);
+    ipcRenderer.on("file-removed", handleFileRemoved);
+    ipcRenderer.on("new-folder-created", handleNewFolder);
+    ipcRenderer.on("folder-removed", handleFolderRemoved);
+    ipcRenderer.on("file-folder-renamed", handleRename);
+
+    return () => {
+      ipcRenderer.removeListener("new-file-created", handleNewFile);
+      ipcRenderer.removeListener("file-removed", handleFileRemoved);
+      ipcRenderer.removeListener("new-folder-created", handleNewFolder);
+      ipcRenderer.removeListener("folder-removed", handleFolderRemoved);
+      ipcRenderer.removeListener("file-folder-renamed", handleRename);
+    };
+  }, [fileTree]);
+
   const handleKebabClick = (e: any) => {
     e.stopPropagation();
     setIsDropdownOpen(!isDropdownOpen);
@@ -70,7 +155,7 @@ function FileTree({
     setIsDropdownOpen(false);
   };
 
-  const handleSubmission = (e: any) => {
+  const handleSubmission = (e: any, path: string, contaningFolder: string) => {
     e.preventDefault();
     const form = new FormData(e.target);
     const name: any = form.get("name");
@@ -78,9 +163,9 @@ function FileTree({
     if (name.trim() === "") return;
 
     if (isCreating.isFolder) {
-      handleAddFolder(isCreating.folderId, name);
+      handleAddFolder(isCreating.folderId, name, path, contaningFolder);
     } else {
-      handleAddFile(isCreating.folderId, name);
+      handleAddFile(isCreating.folderId, name, path, contaningFolder);
     }
 
     e.target.reset();
@@ -113,7 +198,7 @@ function FileTree({
         setIsRenaming({ showInput: true, id: fileTreeId, name: fileTreeName });
         break;
       case "delete":
-        handleDelete(fileTreeId);
+        handleDelete(fileTree.id, fileTree.type, fileTree.path);
         break;
       default:
         break;
@@ -178,6 +263,7 @@ function FileTree({
                       handleRenameSubmit();
                     }
                   }}
+                  style={{ fontSize: "14px" }}
                 />
               ) : fileTree.root === fileTree.name ? (
                 fileTree?.name?.split(/\/|\\/).at(-1)
@@ -200,6 +286,7 @@ function FileTree({
               isOpen={isDropdownOpen}
               fileTreeId={fileTree.id}
               fileTreeName={fileTree.name}
+              fileTreeRoot={fileTree.root}
               onClose={handleDropdownClose}
               type="folder"
               onItemClick={handleDropdownItemClick}
@@ -208,10 +295,25 @@ function FileTree({
         </div>
 
         {isExpanded && (
-          <div className="pl-2">
+          <div
+            style={{
+              paddingLeft: "20px",
+              borderLeft: `${fileTree.name === fileTree.root ? "" : "1px solid #494848"}`,
+            }}
+          >
             {isCreating.showInput && (
               <form
-                onSubmit={handleSubmission}
+                onSubmit={(e) =>
+                  handleSubmission(
+                    e,
+                    fileTree.name === fileTree.root
+                      ? fileTree.name
+                      : fileTree.path,
+                    fileTree.name === fileTree.root
+                      ? fileTree.root
+                      : fileTree.containingFolderPath
+                  )
+                }
                 className="flex items-center w-full gap-1.5"
               >
                 <span className="file flex items-center justify-center text-neutral-400">
@@ -231,6 +333,7 @@ function FileTree({
                   type="text"
                   name="name"
                   className="text-xs outline-none ring-1 ring-neutral-950 ring-inset w-full py-1 px-2 rounded bg-black text-neutral-200 focus:ring-blue-400"
+                  style={{ fontSize: "14px" }}
                 />
               </form>
             )}
@@ -285,6 +388,7 @@ function FileTree({
                   handleRenameSubmit();
                 }
               }}
+              style={{ fontSize: "14px" }}
             />
           ) : (
             fileTree.name
@@ -305,6 +409,7 @@ function FileTree({
           isOpen={isDropdownOpen}
           fileTreeId={fileTree.id}
           fileTreeName={fileTree.name}
+          fileTreeRoot={fileTree.root}
           onClose={handleDropdownClose}
           type="file"
           onItemClick={handleDropdownItemClick}
@@ -321,7 +426,16 @@ function DropdownMenu({
   onItemClick,
   fileTreeId,
   fileTreeName,
-}: any) {
+  fileTreeRoot,
+}: {
+  isOpen: boolean;
+  onClose: any;
+  type: string;
+  onItemClick: any;
+  fileTreeId: any;
+  fileTreeName: string;
+  fileTreeRoot: string;
+}) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -357,13 +471,15 @@ function DropdownMenu({
         <div className="flex flex-col p-1.5 gap-1">
           <button
             onClick={handleClick("newFile")}
-            className="w-full text-left px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
+            className="w-full text-left cursor-pointer px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
+            style={{ fontSize: "14" }}
           >
             New File...
           </button>
           <button
             onClick={handleClick("newFolder")}
-            className="w-full text-left px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
+            className="w-full text-left cursor-pointer px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
+            style={{ fontSize: "14" }}
           >
             New Folder...
           </button>
@@ -374,20 +490,24 @@ function DropdownMenu({
         <div className="border-t border-neutral-400/30 mt-1" />
       )}
 
-      <div className="flex flex-col p-1.5 gap-1">
-        <button
-          onClick={handleClick("rename")}
-          className="w-full text-left px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
-        >
-          Rename...
-        </button>
-        <button
-          onClick={handleClick("delete")}
-          className="w-full text-left px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
-        >
-          Delete {type === "folder" ? "Folder" : "File"}
-        </button>
-      </div>
+      {fileTreeName !== fileTreeRoot && (
+        <div className="flex flex-col p-1.5 gap-1">
+          <button
+            onClick={handleClick("rename")}
+            className="w-full text-left cursor-pointer px-3 py-1 text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
+            style={{ fontSize: "14" }}
+          >
+            Rename...
+          </button>
+          <button
+            onClick={handleClick("delete")}
+            className="w-full text-left px-3 py-1 cursor-pointer text-neutral-400 hover:bg-neutral-400/30 hover:text-neutral-200 rounded text-xs"
+            style={{ fontSize: "14" }}
+          >
+            Delete {type === "folder" ? "Folder" : "File"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
