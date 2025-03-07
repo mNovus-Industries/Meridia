@@ -50,16 +50,16 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: "./main/html/index.html",
-            js: "./main/renderer/renderer.ts",
+            html: "./main/static-html/index.html",
+            js: "./main/renderer-workers/main-worker.ts",
             name: "main_window",
             preload: {
               js: "./main/preload.ts",
             },
           },
           {
-            html: "./main/html/toolsWindow.html",
-            js: "./main/renderer/toolsRenderer.ts",
+            html: "./main/static-html/toolsWindow.html",
+            js: "./main/renderer-workers/tools-worker.ts",
             name: "tools_window",
             preload: {
               js: "./main/preload.ts",

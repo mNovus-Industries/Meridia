@@ -1,5 +1,4 @@
 import { mainWindow } from "..";
-
 import fs from "fs";
 import { PythonShell } from "python-shell";
 import { spawn } from "child_process";

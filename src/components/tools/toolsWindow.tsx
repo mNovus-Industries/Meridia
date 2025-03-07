@@ -5,7 +5,7 @@ import { BarChart } from "./chart-engines/bar-chart";
 import { PieChart } from "./chart-engines/pie-chart";
 import { LineChart } from "./chart-engines/line-chart";
 
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../../helpers/hooks";
 
 import "./styling/index.css";
 import "./styling/table.css";
@@ -65,7 +65,7 @@ export const ToolsWindow = () => {
     "update-tools-data",
     (event: any, data: any) => {
       console.log(data);
-    },
+    }
   );
 
   return (

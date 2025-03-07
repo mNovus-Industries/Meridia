@@ -18,10 +18,10 @@
   },
   "include": [
     "src/**/*",
-    "extensions/meridiaui",
+    "extensions/ui-kit",
     "apps/meridiachat",
-    "main/entries",
-    "main/renderer",
+    "main/entry-points",
+    "main/renderer-workers",
     "main/index.ts",
     "main/preload.ts",
     "forge.config.ts"

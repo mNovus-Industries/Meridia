@@ -6,15 +6,15 @@ import { BarChart } from "./chart-engines/bar-chart";
 import { PieChart } from "./chart-engines/pie-chart";
 import { LineChart } from "./chart-engines/line-chart";
 
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../../helpers/hooks";
 import {
   update_tools_data,
   update_tools_window_state,
-} from "../../shared/rdx-slice";
+} from "../../helpers/state-manager";
 
 import "./styling/index.css";
 import "./styling/table.css";
-import Tooltip from "../../../extensions/meridiaui/tooltip/Tooltip";
+import Tooltip from "../../../extensions/ui-kit/tooltip/Tooltip";
 
 export const Tools = () => {
   let data = useAppSelector((state) => state.main.toolsdata);
