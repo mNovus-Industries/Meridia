@@ -1,7 +1,5 @@
 import os from "os";
-
-import * as pty from "node-pty-prebuilt-multiarch";
-
+import * as pty from "node-pty";
 import { mainWindow } from "..";
 
 let ptyProcess: pty.IPty;

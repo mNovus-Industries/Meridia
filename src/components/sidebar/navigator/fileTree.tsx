@@ -1,6 +1,5 @@
 import { ChevronRightIcon } from "@primer/octicons-react";
 import { useState, useEffect, useRef } from "react";
-import { IFolderStructure } from "../../../helpers/types";
 import FileIcon from "../../../helpers/file-icon";
 
 import "./style.css";
@@ -67,84 +66,6 @@ function FileTree({
       inputRef.current.select();
     }
   }, [isRenaming.showInput]);
-
-  useEffect(() => {
-    const { ipcRenderer } = window.electron;
-
-    const handleNewFile = (
-      _e: any,
-      data: { fullPath: string; containingFolder: string; fileName: string }
-    ) => {
-      if (!fileTree?.children) {
-        console.warn("⚠️ File tree data not loaded yet.");
-        return;
-      }
-
-      console.log("📄 File added:", data);
-      console.log("🧐 Searching for containing folder in:", fileTree.children);
-
-      // Filter only folders before searching
-      const folderNodes = fileTree.children.filter(
-        (node: any) => node.type === "folder"
-      );
-
-      console.log("🔍 Searching in these folder nodes:", folderNodes);
-
-      console.log("strucute", fileTree);
-
-      // Find the parent folder
-      const parentFolder = folderNodes.find(
-        (node: any) => node.path === data.containingFolder
-      );
-
-      console.log("searching parentFolder", parentFolder);
-
-      if (parentFolder) {
-        console.log("✅ Found containing folder:");
-        console.log("📂 Folder ID:", parentFolder.id);
-        console.log("📂 Folder Name:", parentFolder.name);
-      } else {
-        console.warn("⚠️ Containing folder not found in file tree.");
-      }
-    };
-
-    const handleFileRemoved = (_e: any, path: string) => {
-      console.log("File removed:", path);
-    };
-
-    const handleNewFolder = (_e: any, path: string) => {
-      if (!fileTree?.children) {
-        console.warn("File tree data not loaded yet.");
-        return;
-      }
-      console.log(fileTree.children.filter((node: any) => node.path === path));
-    };
-
-    const handleFolderRemoved = (_e: any, path: string) => {
-      console.log("Folder removed:", path);
-    };
-
-    const handleRename = (
-      _e: any,
-      { oldPath, newPath }: { oldPath: string; newPath: string }
-    ) => {
-      console.log("Renamed:", oldPath, "->", newPath);
-    };
-
-    ipcRenderer.on("new-file-created", handleNewFile);
-    ipcRenderer.on("file-removed", handleFileRemoved);
-    ipcRenderer.on("new-folder-created", handleNewFolder);
-    ipcRenderer.on("folder-removed", handleFolderRemoved);
-    ipcRenderer.on("file-folder-renamed", handleRename);
-
-    return () => {
-      ipcRenderer.removeListener("new-file-created", handleNewFile);
-      ipcRenderer.removeListener("file-removed", handleFileRemoved);
-      ipcRenderer.removeListener("new-folder-created", handleNewFolder);
-      ipcRenderer.removeListener("folder-removed", handleFolderRemoved);
-      ipcRenderer.removeListener("file-folder-renamed", handleRename);
-    };
-  }, [fileTree]);
 
   const handleKebabClick = (e: any) => {
     e.stopPropagation();
@@ -297,8 +218,7 @@ function FileTree({
         {isExpanded && (
           <div
             style={{
-              paddingLeft: "20px",
-              borderLeft: `${fileTree.name === fileTree.root ? "" : "1px solid #494848"}`,
+              marginLeft: "20px",
             }}
           >
             {isCreating.showInput && (

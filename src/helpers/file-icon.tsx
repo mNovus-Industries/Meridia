@@ -3,21 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ReactComponent as GitFileIcon } from "../assets/svg/git.svg";
-import { ReactComponent as HTMLFileIcon } from "../assets/svg/html.svg";
-import { ReactComponent as CSSFileIcon } from "../assets/svg/css.svg";
-import { ReactComponent as JSFileIcon } from "../assets/svg/javascript.svg";
-import { ReactComponent as JSONFileIcon } from "../assets/svg/json.svg";
-import { ReactComponent as MarkdownFileIcon } from "../assets/svg/markdown.svg";
-import { ReactComponent as TSFileIcon } from "../assets/svg/ts-1.svg";
-import { ReactComponent as TTFFileIcon } from "../assets/svg/ttf.svg";
-import { ReactComponent as SVGFileIcon } from "../assets/svg/svg.svg";
-import { ReactComponent as PythonFileIcon } from "../assets/svg/py.svg";
-import { ReactComponent as UnknownFileIcon } from "../assets/svg/unknown.svg";
-import { ReactComponent as ExcelFileIcon } from "../assets/svg/excel.svg";
-import { ReactComponent as CSVFileIcon } from "../assets/svg/csv.svg";
-import { ReactComponent as SettingsIcon } from "../assets/svg/settings.svg";
-import { ReactComponent as StudioIcon } from "../assets/svg/remote.svg";
+import { ReactComponent as GitFileIcon } from "../assets/files/git.svg";
+import { ReactComponent as HTMLFileIcon } from "../assets/files/html.svg";
+import { ReactComponent as CSSFileIcon } from "../assets/files/css.svg";
+import { ReactComponent as JSFileIcon } from "../assets/files/javascript.svg";
+import { ReactComponent as JSONFileIcon } from "../assets/files/json.svg";
+import { ReactComponent as MarkdownFileIcon } from "../assets/files/markdown.svg";
+import { ReactComponent as TSFileIcon } from "../assets/files/ts-1.svg";
+import { ReactComponent as TTFFileIcon } from "../assets/files/ttf.svg";
+import { ReactComponent as SVGFileIcon } from "../assets/files/svg.svg";
+import { ReactComponent as PythonFileIcon } from "../assets/files/python.svg";
+import { ReactComponent as UnknownFileIcon } from "../assets/files/unknown.svg";
+import { ReactComponent as ExcelFileIcon } from "../assets/files/excel.svg";
+import { ReactComponent as CSVFileIcon } from "../assets/files/csv.svg";
+import { ReactComponent as SettingsIcon } from "../assets/files/settings.svg";
+import { ReactComponent as StudioIcon } from "../assets/files/remote.svg";
 
 const FileIcon = ({ type }: { type: string }) => {
   const typeIcon = {

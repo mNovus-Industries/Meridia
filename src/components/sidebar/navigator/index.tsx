@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../helpers/hooks";
 import { MainContext, path_join } from "../../../helpers/functions";
 import {
@@ -169,6 +169,8 @@ const Navigator = React.memo((props: any) => {
       containingFolderPath: containingFolder,
     };
 
+    console.log("data file", newFile);
+
     const fileExists = fileTreeData.children.some(
       (child) =>
         path_join([child.path, child.name]) === path_join([path, fileName])
@@ -187,8 +189,8 @@ const Navigator = React.memo((props: any) => {
     );
 
     window.electron.create_file({
-      path: path,
-      fileName: fileName,
+      path: newFile.path,
+      fileName: newFile.name,
       rootPath: fileTreeData.root,
     });
   };
@@ -208,12 +210,14 @@ const Navigator = React.memo((props: any) => {
       children: [],
     };
 
+    console.log("data", newFolder);
+
     setFileTree(
       sortFolderStructure(insertNode(fileTreeData, parentId, newFolder))
     );
     window.electron.create_folder({
-      path: path,
-      fileName: folderName,
+      path: newFolder.path,
+      fileName: newFolder.name,
       rootPath: fileTreeData.root,
     });
   };
@@ -239,7 +243,7 @@ const Navigator = React.memo((props: any) => {
     <div className="folder-tree">
       <div className="explorer-content-wrapper">
         <div className="content-list-outer-container">
-          <div></div>
+          <p>FOLDERS</p>
           <FileTree
             handleDelete={handleDelete}
             handleAddFile={handleAddFile}

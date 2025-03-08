@@ -7,7 +7,7 @@ import { BottomTabs } from "../bottom-tabs";
 
 import Header from "../layout/header";
 
-import { ReactComponent as StudioIcon } from "../../assets/svg/remote.svg";
+import { ReactComponent as StudioIcon } from "../../assets/files/remote.svg";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
@@ -30,6 +30,7 @@ import Navigator from "../sidebar/navigator";
 import Tooltip from "../../../extensions/ui-kit/tooltip/Tooltip";
 
 import "./index.css";
+import { VariableSection } from "../layout/variable";
 
 const iconMap: Record<string, JSX.Element> = {
   Navigator: <FolderOutlined />,
@@ -39,6 +40,9 @@ const iconMap: Record<string, JSX.Element> = {
 
 export const App = () => {
   const sidebarActive = useAppSelector((state) => state.main.sidebar_active);
+  const rightPanelActive = useAppSelector(
+    (state) => state.main.right_sidebar_active
+  );
   const bottomPanelActive = useAppSelector(
     (state) => state.main.bottom_panel_active
   );
@@ -254,7 +258,27 @@ export const App = () => {
                     </PerfectScrollbar>
                   </Splitter.Panel>
                   <Splitter.Panel>
-                    <ContentSection />
+                    <Splitter layout="horizontal">
+                      <Splitter.Panel>
+                        <ContentSection />
+                      </Splitter.Panel>
+                      <Splitter.Panel
+                        defaultSize="20%"
+                        size={rightPanelActive ? undefined : "0%"}
+                        collapsible
+                        max="90%"
+                        style={{
+                          borderLeft: rightPanelActive
+                            ? "1px solid var(--main-border-color)"
+                            : "none",
+                          height: "100%",
+                        }}
+                      >
+                        <PerfectScrollbar>
+                          <VariableSection />
+                        </PerfectScrollbar>
+                      </Splitter.Panel>
+                    </Splitter>
                   </Splitter.Panel>
                 </Splitter>
               </Splitter.Panel>

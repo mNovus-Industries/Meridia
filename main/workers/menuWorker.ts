@@ -5,6 +5,7 @@ import {
   handleOpenFolder,
   handleOpenMeridiaStudio,
   handleOpenOutput,
+  handleOpenRightPanel,
   handleOpenSettings,
   handleOpenSidebar,
   handleOpenTerminal,
@@ -107,9 +108,9 @@ export function RegisterMenu({ store }: { store: any }) {
           click: handleOpenSidebar,
         },
         {
-          label: "Run",
-          click: handleRun,
-          accelerator: "F12",
+          label: "Right Panel",
+          accelerator: "Ctrl + Alt + B",
+          click: handleOpenRightPanel,
         },
         {
           label: "Bottom Panel",
@@ -187,7 +188,7 @@ export function RegisterMenu({ store }: { store: any }) {
 
     menu.items.forEach((item, index) => {
       if (`menu-${index}` === menuId && item.click) {
-        item.click(); // Execute the menu click function
+        item.click();
       }
       if (item.submenu) {
         item.submenu.items.forEach((sub, subIndex) => {

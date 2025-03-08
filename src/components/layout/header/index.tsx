@@ -13,6 +13,9 @@ import { ReactComponent as PanelBottomOff } from "../../../assets/svg/layout-pan
 import { ReactComponent as PanelLeft } from "../../../assets/svg/layout-sidebar-left.svg";
 import { ReactComponent as PanelLeftOff } from "../../../assets/svg/layout-sidebar-left-off.svg";
 
+import { ReactComponent as PanelRight } from "../../../assets/svg/layout-panel-sidebar-right.svg";
+import { ReactComponent as PanelRightOff } from "../../../assets/svg/layout-panel-sidebar-right-off.svg";
+
 import { ReactComponent as Minimize } from "../../../assets/window-controls/minimize.svg";
 import { ReactComponent as Maximize } from "../../../assets/window-controls/maximize.svg";
 import { ReactComponent as Restore } from "../../../assets/window-controls/restore.svg";
@@ -21,6 +24,8 @@ import { ReactComponent as Close } from "../../../assets/window-controls/close.s
 import {
   update_sidebar_active,
   update_bottom_panel_active,
+  update_right_panel_active,
+  update_env_vars,
 } from "../../../helpers/state-manager";
 import { update_current_bottom_tab } from "../../../helpers/state-manager";
 
@@ -40,6 +45,9 @@ export default function Header() {
   const runRef = useRef<HTMLButtonElement>(null);
 
   const sidebar_active = useAppSelector((state) => state.main.sidebar_active);
+  const right_sidebar_active = useAppSelector(
+    (state) => state.main.right_sidebar_active
+  );
   const bottom_panel_active = useAppSelector(
     (state) => state.main.bottom_panel_active
   );
@@ -85,10 +93,23 @@ export default function Header() {
   const handleRun = async () => {
     dispatch(update_bottom_panel_active(true));
     dispatch(update_current_bottom_tab(1));
-    window.electron.run_code({
-      path: active_file.path,
-      script: "python",
-    });
+
+    window.electron.ipcRenderer.send("file-run", active_file.path);
+
+    window.electron.ipcRenderer.on(
+      "variables-result",
+      (event: any, variables: any) => {
+        console.log("Received variables", variables);
+        dispatch(update_env_vars(variables));
+      }
+    );
+
+    window.electron.ipcRenderer.on(
+      "variables-error",
+      (event: any, error: any) => {
+        console.error("Error receiving variables:", error);
+      }
+    );
   };
 
   useEffect(() => {
@@ -103,7 +124,7 @@ export default function Header() {
     window.electron.ipcRenderer.send("menu-click", menuId);
   };
 
-  window.electron.ipcRenderer.on("run-code-manual", () => {
+  window.electron.ipcRenderer.on("run-current-file", () => {
     handleRun();
   });
 
@@ -112,6 +133,13 @@ export default function Header() {
       dispatch(update_sidebar_active(!sidebar_active));
     }, 50),
     [sidebar_active]
+  );
+
+  const toggleRightPanel = useCallback(
+    debounce(() => {
+      dispatch(update_right_panel_active(!right_sidebar_active));
+    }, 50),
+    [right_sidebar_active]
   );
 
   const toggleBottomPanel = useCallback(
@@ -178,6 +206,18 @@ export default function Header() {
 
     return () =>
       window.electron.ipcRenderer.removeListener("open-sidebar", toggleSidebar);
+  });
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("open-right-panel", () => {
+      toggleRightPanel();
+    });
+
+    return () =>
+      window.electron.ipcRenderer.removeListener(
+        "open-right-panel",
+        toggleRightPanel
+      );
   });
 
   useEffect(() => {
@@ -304,6 +344,24 @@ export default function Header() {
           ) : (
             <Tooltip text="Toggle Primary Sidebar ( Ctrl + B )" position="left">
               <PanelLeftOff />
+            </Tooltip>
+          )}
+        </button>
+
+        <button onClick={toggleRightPanel}>
+          {right_sidebar_active ? (
+            <Tooltip
+              text="Toggle Right Panel ( Ctrl + Alt + B )"
+              position="left"
+            >
+              <PanelRight />
+            </Tooltip>
+          ) : (
+            <Tooltip
+              text="Toggle Right Panel ( Ctrl + Alt + B )"
+              position="left"
+            >
+              <PanelRightOff />
             </Tooltip>
           )}
         </button>

@@ -19,6 +19,8 @@ const MainComponent = React.memo((props: any) => {
   >();
 
   const settings = useAppSelector((state) => state.main.editorSettings);
+  const line = useAppSelector((state) => state.main.indent.line);
+  const column = useAppSelector((state) => state.main.indent.column);
 
   const dispatch = useAppDispatch();
 
@@ -178,6 +180,19 @@ const MainComponent = React.memo((props: any) => {
           update_indent({
             line: e.position.lineNumber,
             column: e.position.column,
+            selected: 0,
+          })
+        );
+      });
+
+      editor_ref.current.onDidChangeCursorSelection((e) => {
+        const { startLineNumber, startColumn, endColumn } = e.selection;
+
+        dispatch(
+          update_indent({
+            line: startLineNumber,
+            column: startColumn,
+            selected: Math.abs(endColumn - startColumn),
           })
         );
       });

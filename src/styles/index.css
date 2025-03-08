@@ -3,51 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/src/assets/fonts/JetBrainsMono-Regular.ttf") format("ttf");
-}
-
-@font-face {
-  font-family: "Ubuntu Mono";
-  src: url("/src/assets/fonts/UbuntuMono-Regular.ttf") format("ttf");
-}
-
-@font-face {
-  font-family: "Consolas";
-  src: url("/src/assets/fonts/consolas.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Rubik";
-  src: url("/src/assets/fonts/Rubik.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Cascadia Mono";
-  src: url("/src/assets/fonts/CascadiaMono.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Cascadia Code";
-  src: url("/src/assets/fonts/CascadiaCode.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Segoe Ui";
-  src: url("/src/assets/fonts/Segoe\ Ui.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/src/assets/fonts/Inter_18pt-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Droid Sans Mono";
-  src: url("/src/assets/fonts/DroidSansMono.ttf") format("truetype");
-}
-
 :root {
   --main-bg: #2a292a;
   --main-text-color: #d1d1d1;
@@ -564,6 +519,7 @@ body {
   right: 0 !important;
   background-color: var(--blue);
 }
+
 .no-selected-files {
   width: 100%;
   height: 100%;
@@ -571,7 +527,6 @@ body {
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  gap: 16px;
 }
 
 .no-selected-files svg {
@@ -653,14 +608,12 @@ body {
 }
 
 .folder-tree .explorer-content-wrapper > div:not(:first-child),
-.content-list-outer-container > div:first-child {
+.content-list-outer-container > p {
   color: var(--sidebar-text-color);
-  font-size: 12px;
+  font-size: 16px;
   text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  padding: 10px 6px;
+  font-weight: 1000;
+  padding: 10px 12px;
 }
 
 .folder-tree .explorer-content-wrapper > div:not(:first-child) > svg,
@@ -1332,4 +1285,95 @@ table.dataframe tr:nth-child(even) {
 
 .editor-container {
   height: 100%;
+}
+
+/* Overlay background */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Command palette container */
+.command-palette {
+  width: 500px;
+  background: #1e1e1e;
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Input field */
+.command-input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  outline: none;
+  background: #2a2a2a;
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+/* Command list items */
+.command-item {
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+/* Hover and selected item styles */
+.command-item:hover,
+.command-item[data-selected="true"] {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Shortcut container */
+.shortcut-container {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Individual shortcut key */
+.shortcut-box {
+  background: #3a3d41;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #ccc;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Plus sign */
+.plus {
+  color: #888;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Open button */
+.open-button {
+  padding: 8px 12px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.open-button:hover {
+  background: #444;
 }

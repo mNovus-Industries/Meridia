@@ -1,9 +1,9 @@
-import { ReactComponent as ExcelIcon } from "../../../../assets/svg/excel.svg";
-import { ReactComponent as CSVIcon } from "../../../../assets/svg/csv.svg";
-import { ReactComponent as SQLIcon } from "../../../..//assets/svg/sql.svg";
-import { ReactComponent as PostGreSQLIcon } from "../../../../assets/svg/postgresql.svg";
-import { ReactComponent as MySQLIcon } from "../../../../assets/svg/mysql.svg";
-import { ReactComponent as JSONIcon } from "../../../../assets/svg/json.svg";
+import { ReactComponent as ExcelIcon } from "../../../../assets/files/excel.svg";
+import { ReactComponent as CSVIcon } from "../../../../assets/files/csv.svg";
+import { ReactComponent as SQLIcon } from "../../../..//assets/files/sql.svg";
+import { ReactComponent as PostGreSQLIcon } from "../../../../assets/files/postgresql.svg";
+import { ReactComponent as MySQLIcon } from "../../../../assets/files/mysql.svg";
+import { ReactComponent as JSONIcon } from "../../../../assets/files/json.svg";
 
 interface dataTypesSectionProps {
   handleOptionClick: (dataType: string) => void;

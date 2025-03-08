@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import router from "../helpers/router";
 import { useAppDispatch, useAppSelector } from "../helpers/hooks";
@@ -18,11 +18,42 @@ import { ConfigProvider, theme } from "antd/es";
 import { PrimeReactProvider } from "primereact/api";
 import { AnantProvider } from "../../extensions/ui-kit";
 import { MainContext } from "../helpers/functions";
+import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
+import { Command } from "cmdk";
+import { commands } from "./commands";
 
 const App = React.memo((props: any) => {
   const dispatch = useAppDispatch();
   const settingsDe = useAppSelector((state) => state.main.editorSettings);
   const stateDe = useAppSelector((state) => state.main.uiState);
+
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "p") {
+        event.preventDefault();
+        setOpen((prev) => !prev);
+      }
+
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleCommandSelect = (commandId: string) => {
+    if (window.electron && window.electron.ipcRenderer) {
+      window.electron.ipcRenderer.send("execute-command", commandId);
+    } else {
+      console.error("IPC Renderer is not available.");
+    }
+  };
 
   const { handle_set_editor } = React.useContext(MainContext) || {};
 
@@ -67,22 +98,70 @@ const App = React.memo((props: any) => {
   }, [startup]);
 
   return (
-    <AnantProvider mode="dark">
-      <PrimeReactProvider>
-        <ConfigProvider
-          theme={{
-            algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
-            components: {
-              Splitter: {
-                splitBarSize: 0,
+    <FluentProvider theme={webDarkTheme}>
+      <AnantProvider mode="dark">
+        <PrimeReactProvider>
+          <ConfigProvider
+            theme={{
+              algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
+              components: {
+                Splitter: {
+                  splitBarSize: 0,
+                },
               },
-            },
-          }}
-        >
-          <RouterProvider router={router} />
-        </ConfigProvider>
-      </PrimeReactProvider>
-    </AnantProvider>
+            }}
+          >
+            {open && (
+              <div className="overlay" onClick={() => setOpen(false)}>
+                <div
+                  className="command-palette"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Command>
+                    <Command.Input
+                      value={search}
+                      onValueChange={setSearch}
+                      placeholder="Type a command..."
+                      className="command-input"
+                      autoFocus
+                    />
+                    <Command.List>
+                      {commands
+                        .filter((cmd) =>
+                          cmd.label.toLowerCase().includes(search.toLowerCase())
+                        )
+                        .map((cmd) => (
+                          <Command.Item
+                            key={cmd.id}
+                            onSelect={() => {
+                              handleCommandSelect(cmd.id);
+                              setOpen(false);
+                            }}
+                            className="command-item"
+                          >
+                            <span>{cmd.label}</span>
+                            <div className="shortcut-container">
+                              {cmd.shortcut.map((key, index) => (
+                                <React.Fragment key={index}>
+                                  <span className="shortcut-box">{key}</span>
+                                  {index < cmd.shortcut.length - 1 && (
+                                    <span className="plus">+</span>
+                                  )}
+                                </React.Fragment>
+                              ))}
+                            </div>
+                          </Command.Item>
+                        ))}
+                    </Command.List>
+                  </Command>
+                </div>
+              </div>
+            )}
+            <RouterProvider router={router} />
+          </ConfigProvider>
+        </PrimeReactProvider>
+      </AnantProvider>
+    </FluentProvider>
   );
 });
 

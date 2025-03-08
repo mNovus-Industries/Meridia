@@ -1,5 +1,5 @@
-import { ReactComponent as ExcelIcon } from "../../../../assets/svg/excel.svg";
-import { ReactComponent as JSONIcon } from "../../../../assets/svg/json.svg";
+import { ReactComponent as ExcelIcon } from "../../../../assets/files/excel.svg";
+import { ReactComponent as JSONIcon } from "../../../../assets/files/json.svg";
 
 interface chooseStepSectionProps {
   setStep: (step: number) => void;

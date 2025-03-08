@@ -8,7 +8,9 @@ export const PUBLIC_FOLDER_PATH = path.join(
   app.getPath("userData"),
   "MeridiaLocalStorage"
 );
+
 export const PUBLIC_THEME_FOLDER_PATH = path.join(PUBLIC_FOLDER_PATH, "theme");
+
 export const PUBLIC_STUDIO_FOLDER_PATH = path.join(
   PUBLIC_FOLDER_PATH,
   "studio"
@@ -18,11 +20,16 @@ export const SETTINGS_JSON_PATH = path.join(
   PUBLIC_FOLDER_PATH,
   "settings.json"
 );
+
 export const UI_STATE_JSON_PATH = path.join(
   PUBLIC_FOLDER_PATH,
   "ui_state.json"
 );
+
 export const UI_JSON_PATH = path.join(PUBLIC_FOLDER_PATH, "ui.json");
+
+export const STORAGE_JSON_PATH = path.join(PUBLIC_FOLDER_PATH, "storage.json");
+
 export const MERIDIA_STUDIO_VAR_PATH = path.join(
   PUBLIC_STUDIO_FOLDER_PATH,
   "vars.json"
@@ -45,6 +52,9 @@ export function RegisterFileWorker() {
 
   if (!fs.existsSync(UI_JSON_PATH))
     fs.writeFileSync(UI_JSON_PATH, JSON.stringify({}));
+
+  if (!fs.existsSync(STORAGE_JSON_PATH))
+    fs.writeFileSync(STORAGE_JSON_PATH, JSON.stringify({}));
 
   ipcMain.on("clear-settings", () =>
     fs.writeFileSync(SETTINGS_JSON_PATH, "{}")

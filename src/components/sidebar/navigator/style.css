@@ -1,4 +1,9 @@
 .file svg {
-  width: 14px;
+  width: 13px;
+  height: auto;
+}
+
+.arrow svg {
+  width: 10px;
   height: auto;
 }

@@ -1,7 +1,6 @@
 import { autoUpdater, dialog } from "electron";
 
 export function RegisterUpdateWorker() {
-  // Check for updates on startup
   autoUpdater.checkForUpdates();
 
   autoUpdater.on("update-available", () => {

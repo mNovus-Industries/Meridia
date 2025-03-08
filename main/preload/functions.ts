@@ -1,4 +1,4 @@
-import { ipcMain, ipcRenderer } from "electron";
+import { IpcRenderer, ipcRenderer } from "electron";
 
 import { IEditorSettings, IUI, IUIState } from "../../src/helpers/types";
 
@@ -103,12 +103,6 @@ export const renderer = {
     ipcRenderer.send("refresh-window", folder);
   },
 
-  run_code: (data: { path: string; script: string }) => {
-    try {
-      ipcRenderer.invoke("run-code", data);
-    } catch {}
-  },
-
   delete_file: (data: { path: string; rootPath: string }) => {
     ipcRenderer.send("delete-file", data);
   },
@@ -164,19 +158,4 @@ export const renderer = {
   },
   sendMessage: (message: string) => ipcRenderer.invoke("send-message", message),
   getMenu: () => ipcRenderer.invoke("get-menu"),
-  installPackage: (name: string) => ipcRenderer.invoke("install-package", name),
-  uninstallPackage: (name: string) =>
-    ipcRenderer.invoke("uninstall-package", name),
-  getInstalledPackages: () => ipcRenderer.invoke("get-installed-packages"),
-  searchPyPiPackages: (query: string) =>
-    ipcRenderer.invoke("search-pypi-packages", query),
-  run_python_code: async (code: string) => {
-    try {
-      const result = await ipcRenderer.invoke("run-python-code", code);
-      return result ?? {}; // Ensure an empty object if result is null/undefined
-    } catch (error) {
-      console.error("Error running Python code:", error);
-      return {}; // Return an empty object instead of undefined
-    }
-  },
 };

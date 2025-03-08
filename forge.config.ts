@@ -1,35 +1,34 @@
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { MakerSquirrel } from "@electron-forge/maker-squirrel";
 import { MakerDeb } from "@electron-forge/maker-deb";
-import { MakerZIP } from "@electron-forge/maker-zip";
 import { WebpackPlugin } from "@electron-forge/plugin-webpack";
-import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
 import { mainConfig } from "./webpack.main.config";
 import { rendererConfig } from "./webpack.renderer.config";
 
 const config: ForgeConfig = {
   packagerConfig: {
-    asar: true,
+    asar: {
+      unpack: "**/node_modules/node-pty/build/Release/*",
+    },
     name: "Meridia",
     executableName: "Meridia",
     icon: "./src/assets/icon.ico",
-    appVersion: "beta",
+    appVersion: "1.0.0",
   },
-
   makers: [
     new MakerSquirrel({
       name: "Meridia",
-      setupExe: "MeridiaSetup",
-      setupMsi: "MeridiaMsiSetup",
+      setupExe: "MeridiaSetup.exe",
+      setupMsi: "MeridiaMsiSetup.msi",
       noMsi: false,
       setupIcon: "./src/assets/icon.ico",
-      exe: "Meridia",
+      exe: "Meridia.exe",
       title: "Meridia",
       iconUrl: "./src/assets/icon.ico",
       owners: "MNovus",
       authors: "MNovus",
       description: "The new world of Python Development",
-      version: "beta",
+      version: "1.0.0",
     }),
     new MakerDeb({
       options: {
@@ -43,7 +42,6 @@ const config: ForgeConfig = {
     }),
   ],
   plugins: [
-    new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
       mainConfig,
       renderer: {

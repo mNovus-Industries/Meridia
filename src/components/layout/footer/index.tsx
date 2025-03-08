@@ -40,7 +40,8 @@ const FooterComponent = React.memo(() => {
       <div style={{ display: "flex", gap: "10px" }}>
         {ui.footer.some((item) => item.type === "editor-indent") && (
           <div>
-            Ln {editor_indent.line}, Col {editor_indent.column}
+            Ln {editor_indent.line}, Col {editor_indent.column} (
+            {editor_indent.selected} selected)
           </div>
         )}
 

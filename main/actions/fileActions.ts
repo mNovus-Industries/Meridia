@@ -1,5 +1,4 @@
 import path from "path";
-import { get_files } from "../electron/get_files";
 import fs from "fs";
 
 export const delete_file = ({
@@ -11,18 +10,6 @@ export const delete_file = ({
 }) => {
   if (!data.path) return;
   const folder = fs.rmSync(data.path);
-
-  const children = get_files(data.rootPath);
-  const structure = {
-    id: 1,
-    name: data.rootPath,
-    root: data.rootPath,
-    type: "folder",
-    children,
-  };
-
-  // @ts-ignore
-  store.set(SELECTED_FOLDER_STORE_NAME, structure);
 };
 
 export const delete_folder = ({
@@ -34,23 +21,8 @@ export const delete_folder = ({
 }) => {
   if (!data.path) return;
 
-  // Delete folder and contents recursively
   fs.rmSync(data.path, { recursive: true, force: true });
-
-  // Rebuild file structure
-  const children = get_files(data.rootPath);
-  const structure = {
-    id: 1,
-    name: data.rootPath,
-    root: data.rootPath,
-    type: "folder",
-    children,
-  };
-
-  // @ts-ignore
-  store.set(SELECTED_FOLDER_STORE_NAME, structure);
 };
-
 export const create_folder = ({
   data,
   store,
@@ -58,26 +30,9 @@ export const create_folder = ({
   data: { path: string; rootPath: string; fileName: string };
   store: any;
 }) => {
-  const new_folder = fs.mkdirSync(path.join(data.path, data.fileName));
-
-  const children = get_files(data.rootPath);
-  const structure = {
-    id: 1,
-    name: data.rootPath,
-    root: data.rootPath,
-    type: "folder",
-    children,
-  };
-
-  // @ts-ignore
-  store.set(SELECTED_FOLDER_STORE_NAME, structure);
-
-  const newFolder = {
-    name: data.fileName,
-    parentPath: data.path,
-    path: data.path,
-    is_dir: true,
-  };
+  if (!fs.existsSync(data.path)) {
+    fs.mkdirSync(data.path, { recursive: true });
+  }
 };
 
 export const create_file = ({
@@ -87,19 +42,9 @@ export const create_file = ({
   data: { path: string; rootPath: string; fileName: string };
   store: any;
 }) => {
-  const new_file = fs.writeFileSync(path.join(data.path, data.fileName), "");
-
-  const children = get_files(data.rootPath);
-  const structure = {
-    id: 1,
-    name: data.rootPath,
-    root: data.rootPath,
-    type: "folder",
-    children,
-  };
-
-  // @ts-ignore
-  store.set(SELECTED_FOLDER_STORE_NAME, structure);
+  if (!fs.existsSync(data.path)) {
+    fs.writeFileSync(data.path, "");
+  }
 };
 
 export const handle_rename = (
@@ -116,16 +61,4 @@ export const handle_rename = (
     data.path,
     path.join(data.containingFolder, data.newName)
   );
-
-  const children = get_files(data.rootPath);
-  const structure = {
-    id: 1,
-    name: data.rootPath,
-    root: data.rootPath,
-    type: "folder",
-    children,
-  };
-
-  // @ts-ignore
-  store.set(SELECTED_FOLDER_STORE_NAME, structure);
 };

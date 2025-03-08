@@ -1,0 +1,7 @@
+.variable-wrapper p {
+  color: var(--sidebar-text-color);
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 1000;
+  padding: 10px 12px;
+}

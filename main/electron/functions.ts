@@ -19,41 +19,38 @@ export const run_code = ({ data }: { data: { path: string } }) => {
     const { path } = data;
     if (!path.endsWith(".py") && !path.endsWith(".js")) return;
 
+    const isPython = path.endsWith(".py");
     let process: any;
 
-    if (path.endsWith(".js")) {
-      process = spawn("node", [path]);
-    } else {
+    if (isPython) {
       process = new PythonShell(path, {
         pythonPath: PythonShell.defaultPythonPath,
         mode: "text",
         pythonOptions: ["-u"],
       });
-
-      process.on("message", (message: any) => {
-        console.log("PythonShell Message:", message);
-        mainWindow?.webContents.send("received-output", message);
-      });
+    } else {
+      process = spawn("node", [path]);
     }
 
-    // Handle stdout only for JS, as PythonShell already manages output
-    if (path.endsWith(".js") && process.stdout) {
-      process.stdout.on("data", (output: any) => {
-        console.log("STDOUT:", output.toString().trim());
-        mainWindow?.webContents.send(
-          "received-output",
-          output.toString().trim()
-        );
-      });
+    const handleOutput = (output: any) => {
+      const message = output.toString().trim();
+      console.log("Output:", message);
+      mainWindow?.webContents.send("received-output", message);
+    };
+
+    if (!isPython && process.stdout) {
+      process.stdout.on("data", handleOutput);
+    }
+
+    if (isPython) {
+      process.on("message", handleOutput);
     }
 
     if (process.stderr) {
       process.stderr.on("data", (error: any) => {
-        console.error("STDERR:", error.toString().trim());
-        mainWindow?.webContents.send(
-          "received-output",
-          `Error: ${error.toString().trim()}`
-        );
+        const errorMsg = `Error: ${error.toString().trim()}`;
+        console.error(errorMsg);
+        mainWindow?.webContents.send("received-output", errorMsg);
       });
     }
   } catch (err) {

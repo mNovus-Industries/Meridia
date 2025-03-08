@@ -30,9 +30,10 @@ export interface IMainState {
   settings_tab_active: boolean;
   indent: TIndent;
   data_studio_active: TDataStudioActive;
-  env_vars: TEnvVars;
+  env_vars: any;
   set_data_tool_type_tab: DataPreviewToolsTab;
   sidebar_active: boolean;
+  right_sidebar_active: boolean;
   bottom_panel_active: boolean;
   toolsdata: any;
   tools_in_a_window: boolean;
@@ -138,6 +139,7 @@ export type TActiveFile = {
 export type TIndent = {
   line: number;
   column: number;
+  selected: number;
 };
 
 // Selected file by Editor (or tab) Type
