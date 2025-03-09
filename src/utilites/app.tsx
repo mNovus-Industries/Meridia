@@ -1,26 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import { RouterProvider } from "react-router-dom";
-import router from "../helpers/router";
+
+import { ConfigProvider, theme } from "antd/es";
+import { PrimeReactProvider } from "primereact/api";
+import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
+
 import { useAppDispatch, useAppSelector } from "../helpers/hooks";
+import router from "../helpers/router";
+import { MainContext } from "../helpers/functions";
+
 import {
   IEditorSettings,
   IFolderStructure,
   IUI,
   IUIState,
 } from "../helpers/types";
+
 import {
   set_folder_structure,
   update_settings,
   update_ui,
   update_ui_state,
 } from "../helpers/state-manager";
-import { ConfigProvider, theme } from "antd/es";
-import { PrimeReactProvider } from "primereact/api";
-import { AnantProvider } from "../../extensions/ui-kit";
-import { MainContext } from "../helpers/functions";
-import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
+
+import { AnantProvider } from "../../support/ui-kit";
 import { Command } from "cmdk";
 import { commands } from "./commands";
+import { RegisterPluginWorker } from "../../main/workers/pluginWorker";
 
 const App = React.memo((props: any) => {
   const dispatch = useAppDispatch();
@@ -33,7 +39,11 @@ const App = React.memo((props: any) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "p") {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.shiftKey &&
+        event.code === "KeyP"
+      ) {
         event.preventDefault();
         setOpen((prev) => !prev);
       }
@@ -91,11 +101,25 @@ const App = React.memo((props: any) => {
       if (state.active_file) {
       }
     }
+
+    RegisterPluginWorker();
   }, [dispatch]);
 
   React.useLayoutEffect(() => {
     startup();
   }, [startup]);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("open-command-palette", () => {
+      setOpen(true);
+    });
+
+    return () =>
+      window.electron.ipcRenderer.removeListener(
+        "open-command-palette",
+        setOpen
+      );
+  }, []);
 
   return (
     <FluentProvider theme={webDarkTheme}>

@@ -1,6 +1,11 @@
-import { IpcRenderer, ipcRenderer } from "electron";
+import { ipcRenderer } from "electron";
 
-import { IEditorSettings, IUI, IUIState } from "../../src/helpers/types";
+import {
+  IEditorSettings,
+  IFolderStructure,
+  IUI,
+  IUIState,
+} from "../../src/helpers/types";
 
 export const renderer = {
   openFolder: async () => {
@@ -60,9 +65,7 @@ export const renderer = {
 
   get_file_content: async (path: string) => {
     try {
-      console.log("path", path);
       const file_content = await ipcRenderer.invoke("get-file-content", path);
-      console.log("content", file_content);
       return file_content;
     } catch {
       return "error fetching file content";
@@ -97,6 +100,10 @@ export const renderer = {
 
   set_folder: (folder: string) => {
     ipcRenderer.send("set-folder", folder);
+  },
+
+  set_folder_structure: (structure: IFolderStructure) => {
+    ipcRenderer.send("set-folder-structure", structure);
   },
 
   reload_window: (folder: string) => {

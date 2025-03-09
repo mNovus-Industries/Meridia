@@ -26,7 +26,7 @@ const initialState: IMainState = {
   env_vars: {} as TEnvVars,
   data_studio_active: { active: false } as TDataStudioActive,
   set_data_tool_type_tab: { active: true, data: [] } as DataPreviewToolsTab,
-  right_sidebar_active: true,
+  right_sidebar_active: false,
   sidebar_active: true,
   bottom_panel_active: true,
   toolsdata: null,

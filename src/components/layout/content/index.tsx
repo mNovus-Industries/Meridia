@@ -47,7 +47,7 @@ const ContentSection = React.memo((props: any) => {
       e.stopPropagation();
 
       if (file.name === "Settings" || file.name === "Studio") {
-        handleRemoveTab();
+        handleRemoveTab(file);
         return;
       }
 
@@ -65,28 +65,34 @@ const ContentSection = React.memo((props: any) => {
     [active_files, active_file]
   );
 
-  const handleRemoveTab = React.useCallback(() => {
-    const _clone = [...active_files];
-    const index_to_remove = _clone.findIndex(
-      (file) => file.name === "Settings" || file.name === "Studio"
-    );
+  const handleRemoveTab = React.useCallback(
+    (fileToRemove: TActiveFile) => {
+      const _clone = [...active_files];
 
-    if (index_to_remove === -1) return;
+      const index_to_remove = _clone.findIndex(
+        (file) => file.name === fileToRemove.name
+      );
 
-    _clone.splice(index_to_remove, 1);
+      if (index_to_remove === -1) return;
 
-    let next_index = index_to_remove === 0 ? 0 : index_to_remove - 1;
+      _clone.splice(index_to_remove, 1); // Remove the tab
 
-    if (next_index < 0 || next_index >= _clone.length) {
-      next_index = _clone.length - 1;
-    }
+      let next_index = index_to_remove;
 
-    if (active_file.name === "Settings" || active_file.name === "Studio") {
-      dispatch(update_active_file(_clone[next_index] || null));
-    }
+      // Ensure next index is within bounds
+      if (next_index >= _clone.length) {
+        next_index = _clone.length - 1;
+      }
 
-    dispatch(update_active_files(_clone));
-  }, [active_files, active_file]);
+      // Only update active file if the one being removed is currently active
+      if (active_file?.name === fileToRemove.name) {
+        dispatch(update_active_file(_clone[next_index] || null));
+      }
+
+      dispatch(update_active_files(_clone));
+    },
+    [active_files, active_file]
+  );
 
   const handle_set_tab = React.useCallback(
     (file: TActiveFile) => {
@@ -96,14 +102,15 @@ const ContentSection = React.memo((props: any) => {
   );
 
   useEffect(() => {
+    const editor: HTMLDivElement = document.querySelector("#editor");
+    if (!editor) return;
+
     if (active_file?.name === "Settings" || active_file?.name === "Studio") {
-      document.querySelector("#editor")?.setAttribute("style", "display: none");
+      editor.style.display = "none";
     } else {
-      document
-        .querySelector("#editor")
-        ?.setAttribute("style", "display: block");
+      editor.style.display = "block";
     }
-  }, [active_file, handle_set_tab]);
+  }, [active_file]);
 
   const handleMiddleClick = (e: any, file: any) => {
     if (e.button === 1) {
@@ -123,31 +130,31 @@ const ContentSection = React.memo((props: any) => {
       active_files?.length == 0 ? (
         <div className="no-selected-files">
           <span>
-            <p>Terminal</p>
+            <p>Show All Commands</p>
             <code>
-              <kbd>Ctrl</kbd> + <kbd>`</kbd>
+              <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
             </code>
           </span>
           <span>
-            <p>Output</p>
+            <p>New File</p>
             <code>
-              <kbd>Ctrl</kbd> + <kbd>K</kbd>
+              <kbd>Ctrl</kbd> + <kbd>N</kbd>
             </code>
           </span>
           <span>
-            <p>Run</p>
+            <p>Open File</p>
             <code>
-              <kbd>F5</kbd>
+              <kbd>Ctrl</kbd> + <kbd>O</kbd>
             </code>
           </span>
           <span>
-            <p>MStudio</p>
+            <p>Open Meridia Studio</p>
             <code>
               <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd>
             </code>
           </span>
           <span>
-            <p>Settings</p>
+            <p>Open Settings</p>
             <code>
               <kbd>Ctrl</kbd> + <kbd>,</kbd>
             </code>
@@ -191,15 +198,24 @@ const ContentSection = React.memo((props: any) => {
               ))}
             </div>
           </PerfectScrollbar>
-          {active_file?.name === "Settings" ||
-          active_file?.name === "Studio" ? (
+          <div
+            className="editor-container"
+            id="editor"
+            style={{
+              display:
+                active_file?.name === "Settings" ||
+                active_file?.name === "Studio"
+                  ? "none"
+                  : "block",
+            }}
+          ></div>
+
+          {(active_file?.name === "Settings" ||
+            active_file?.name === "Studio") && (
             <PerfectScrollbar options={{ wheelPropagation: false }}>
               {active_file?.name === "Settings" && <SettingsComponent />}
               {active_file?.name === "Studio" && <DataStudio />}
-              <div className="editor-container" id="editor"></div>
             </PerfectScrollbar>
-          ) : (
-            <div className="editor-container" id="editor"></div>
           )}
         </div>
       )}

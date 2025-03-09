@@ -7,7 +7,3 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import "../../src/styles/index.css";
 import "../../src/styles/fonts.css";
 import "../entry-points/tools-entry";
-
-console.log(
-  '👋 This message is being logged by "tools renderer.js", included via webpack'
-);

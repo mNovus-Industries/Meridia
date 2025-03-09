@@ -7,9 +7,7 @@ import { rendererConfig } from "./webpack.renderer.config";
 
 const config: ForgeConfig = {
   packagerConfig: {
-    asar: {
-      unpack: "**/node_modules/node-pty/build/Release/*",
-    },
+    asar: false,
     name: "Meridia",
     executableName: "Meridia",
     icon: "./src/assets/icon.ico",

@@ -18,7 +18,7 @@
   },
   "include": [
     "src/**/*",
-    "extensions/ui-kit",
+    "support/ui-kit",
     "apps/meridiachat",
     "main/entry-points",
     "main/renderer-workers",

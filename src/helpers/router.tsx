@@ -1,6 +1,6 @@
 import { createBrowserRouter, createHashRouter } from "react-router-dom";
 import MainComponent from "../components/utilites/main";
-import Navigator from "../components/sidebar/navigator";
+import Folders from "../components/sidebar/folders";
 
 import { Tools } from "../components/tools/index";
 
@@ -12,7 +12,7 @@ export default createHashRouter([
     children: [
       {
         path: "",
-        element: <Navigator />,
+        element: <Folders />,
         index: true,
       },
     ],

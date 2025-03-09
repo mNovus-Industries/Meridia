@@ -126,21 +126,6 @@ function FileTree({
     }
   };
 
-  useEffect(() => {
-    console.log("tree", fileTree);
-  }, []);
-
-  useEffect(() => {
-    console.log(
-      "Children of",
-      fileTree.name,
-      ":",
-      fileTree.children,
-      "type",
-      fileTree.type
-    );
-  }, []);
-
   if (fileTree.type === "folder") {
     return (
       <>

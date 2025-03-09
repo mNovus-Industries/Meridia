@@ -2,6 +2,7 @@ import { dialog } from "electron";
 import { mainWindow, SELECTED_FOLDER_STORE_NAME } from "..";
 import { get_files } from "../electron/get_files";
 import { registerCommand } from "./commandWorker";
+import { IFolderStructure } from "../../src/helpers/types";
 
 export function handleNewFile() {
   registerCommand("new-file-tab");
@@ -20,7 +21,7 @@ export async function handleOpenFile() {
   }
 }
 
-export async function handleOpenFolder(store: any) {
+export async function handleOpenFolder({ store }: { store: any }) {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
     properties: ["openDirectory"],
   });
@@ -76,6 +77,10 @@ export function handleRun() {
   registerCommand("run-current-file");
 }
 
+export function handleOpenCommandPalette() {
+  registerCommand("open-command-palette");
+}
+
 export async function handleOpenSetFolder({ store }: { store: any }) {
   const folder = await dialog.showOpenDialog(mainWindow, {
     properties: ["openDirectory"],
@@ -96,7 +101,7 @@ export async function handleOpenSetFolder({ store }: { store: any }) {
   }
 }
 
-export const open_folder = async () => {
+export const open_folder = async ({ store }: { store: any }) => {
   const folder = await dialog.showOpenDialog(mainWindow, {
     properties: ["openDirectory"],
   });
@@ -117,7 +122,13 @@ export const open_folder = async () => {
   return structure;
 };
 
-export const set_folder = ({ folder }: { folder: string }) => {
+export const set_folder = ({
+  folder,
+  store,
+}: {
+  folder: string;
+  store: any;
+}) => {
   let structure = undefined;
 
   try {
@@ -139,7 +150,24 @@ export const set_folder = ({ folder }: { folder: string }) => {
   }
 };
 
-export const refresh_window = ({ folder }: { folder: string }) => {
+export const set_folder_structure = ({
+  structure,
+  store,
+}: {
+  structure: IFolderStructure;
+  store: any;
+}) => {
+  // @ts-ignore
+  store.set(SELECTED_FOLDER_STORE_NAME, structure);
+};
+
+export const refresh_window = ({
+  folder,
+  store,
+}: {
+  folder: string;
+  store: any;
+}) => {
   let structure = undefined;
 
   const children = get_files(folder);

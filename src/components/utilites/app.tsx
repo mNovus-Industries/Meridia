@@ -18,22 +18,18 @@ import {
   update_sidebar_active,
 } from "../../helpers/state-manager";
 import { store } from "../../helpers/store";
+import { PluginAPI } from "../../../plugins/api/pluginAPI";
+import { VariableSection } from "../layout/variable";
+import Folders from "../sidebar/folders";
 
-import {
-  BarChartOutlined,
-  FolderOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { FolderOutlined, SettingOutlined } from "@ant-design/icons";
 
-import Navigator from "../sidebar/navigator";
-
-import Tooltip from "../../../extensions/ui-kit/tooltip/Tooltip";
+import Tooltip from "../../../support/ui-kit/tooltip/Tooltip";
 
 import "./index.css";
-import { VariableSection } from "../layout/variable";
 
 const iconMap: Record<string, JSX.Element> = {
-  Navigator: <FolderOutlined />,
+  Folders: <FolderOutlined />,
   Settings: <SettingOutlined />,
   "Meridia Studio": <StudioIcon />,
 };
@@ -49,16 +45,19 @@ export const App = () => {
 
   const ui = useAppSelector((state) => state.main.ui);
 
-  const [activeItem, setActiveItem] = useState("Navigator");
+  const [activeItem, setActiveItem] = useState<string | null>("Folders");
+  const [pluginContent, setPluginContent] = useState<React.ReactNode | null>(
+    null
+  );
 
   const dispatch = useAppDispatch();
 
   const items = [
     {
-      name: "Navigator",
+      name: "Folders",
       key: 0,
       icon: <FolderOutlined />,
-      content: <Navigator />,
+      content: <Folders />,
     },
   ];
 
@@ -135,6 +134,22 @@ export const App = () => {
       );
   }, []);
 
+  const handleClick = (item: any) => {
+    if (item.content === "settings") return openSettings();
+    if (item.content === "mstudio") return openMeridiaStudio();
+
+    if (item.content === "content") {
+      const isActive = activeItem === item.name ? null : item.name;
+      setActiveItem(isActive);
+      dispatch(update_sidebar_active(isActive !== null));
+    }
+  };
+
+  const handlePluginClick = (iconId: string) => {
+    setActiveItem(iconId);
+    setPluginContent(PluginAPI.sidebarContent[iconId] || null);
+  };
+
   return (
     <div
       className="wrapper-component"
@@ -149,77 +164,26 @@ export const App = () => {
       <Header />
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
         <div className="sidebar" style={{ background: "#363636" }}>
-          <div className="top">
-            {ui.sidebar
-              .filter((item) => item.position === "top")
-              .map((item, index) => (
-                <Tooltip
-                  key={index}
-                  text={item.tooltip + " (" + item.shortcut + ")"}
-                  position="right"
-                >
-                  <div
-                    className={`sidebar-item ${activeItem === item.name ? "active" : ""}`}
-                    onClick={() => {
-                      if (item.content === "settings") {
-                        openSettings();
-                      }
-                      if (item.content === "mstudio") {
-                        openMeridiaStudio();
-                      }
-                      if (item.content === "content") {
-                        setActiveItem(
-                          activeItem === item.name ? null : item.name
-                        );
-                        dispatch(
-                          update_sidebar_active(
-                            activeItem === item.name ? false : true
-                          )
-                        );
-                      }
-                    }}
+          {["top", "bottom"].map((position) => (
+            <div key={position} className={position}>
+              {ui.sidebar
+                .filter((item) => item.position === position)
+                .map((item, index) => (
+                  <Tooltip
+                    key={index}
+                    text={`${item.tooltip} (${item.shortcut})`}
+                    position="right"
                   >
-                    {iconMap[item.name] || <FolderOutlined />}
-                  </div>
-                </Tooltip>
-              ))}
-          </div>
-
-          <div className="bottom">
-            {ui.sidebar
-              .filter((item) => item.position === "bottom")
-              .map((item, index) => (
-                <Tooltip
-                  key={index}
-                  text={item.tooltip + " (" + item.shortcut + ")"}
-                  position="right"
-                >
-                  <div
-                    className={`sidebar-item ${activeItem === item.name ? "active" : ""}`}
-                    onClick={() => {
-                      if (item.content === "settings") {
-                        openSettings();
-                      }
-                      if (item.content === "mstudio") {
-                        openMeridiaStudio();
-                      }
-                      if (item.content === "content") {
-                        setActiveItem(
-                          activeItem === item.name ? null : item.name
-                        );
-                        dispatch(
-                          update_sidebar_active(
-                            activeItem === item.name ? false : true
-                          )
-                        );
-                      }
-                    }}
-                  >
-                    {iconMap[item.name] || <FolderOutlined />}
-                  </div>
-                </Tooltip>
-              ))}
-          </div>
+                    <div
+                      className={`sidebar-item ${activeItem === item.name && sidebarActive ? "active" : ""}`}
+                      onClick={() => handleClick(item)}
+                    >
+                      {iconMap[item.name] || <FolderOutlined />}
+                    </div>
+                  </Tooltip>
+                ))}
+            </div>
+          ))}
         </div>
 
         <Splitter

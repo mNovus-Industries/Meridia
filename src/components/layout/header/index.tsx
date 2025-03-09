@@ -5,7 +5,7 @@ import { BarsOutlined, CaretRightOutlined } from "@ant-design/icons/lib";
 import { useAppDispatch } from "../../../helpers/hooks";
 import { useAppSelector } from "../../../helpers/hooks";
 
-import Tooltip from "../../../../extensions/ui-kit/tooltip/Tooltip";
+import Tooltip from "../../../../support/ui-kit/tooltip/Tooltip";
 
 import { ReactComponent as PanelBottom } from "../../../assets/svg/layout-panel.svg";
 import { ReactComponent as PanelBottomOff } from "../../../assets/svg/layout-panel-off.svg";
@@ -28,6 +28,8 @@ import {
   update_env_vars,
 } from "../../../helpers/state-manager";
 import { update_current_bottom_tab } from "../../../helpers/state-manager";
+
+import { notificationWorker } from "../../../../main/workers/notificationWorker";
 
 import { debounce } from "lodash";
 
@@ -67,22 +69,19 @@ export default function Header() {
   useEffect(() => {
     window.electron.getMenu().then((menu: any) => {
       setMenuItems(menu || []);
-      console.log("menu", menu);
     });
   }, []);
 
   useEffect(() => {
-    function handleClickOutside(event: any) {
+    const handleClickOutside = (event: any) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuVisible(false);
         setActiveSubmenu(null);
       }
-    }
+    };
 
     if (menuVisible) {
       document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
@@ -90,160 +89,149 @@ export default function Header() {
     };
   }, [menuVisible]);
 
-  const handleRun = async () => {
+  const handleRun = useCallback(() => {
     dispatch(update_bottom_panel_active(true));
     dispatch(update_current_bottom_tab(1));
 
     window.electron.ipcRenderer.send("file-run", active_file.path);
 
-    window.electron.ipcRenderer.on(
-      "variables-result",
-      (event: any, variables: any) => {
-        console.log("Received variables", variables);
-        dispatch(update_env_vars(variables));
-      }
+    const notifId = notificationWorker.addNotification(
+      `Running "${active_file.name}"`,
+      "info",
+      "Meridia"
     );
 
-    window.electron.ipcRenderer.on(
-      "variables-error",
-      (event: any, error: any) => {
-        console.error("Error receiving variables:", error);
-      }
-    );
-  };
+    setTimeout(() => {
+      notificationWorker.removeNotification(notifId);
+    }, 4000);
+
+    const handleVariablesResult = (event: any, variables: any) => {
+      console.log("Received variables", variables);
+      const varNotifId = notificationWorker.addNotification(
+        `Getting Variables from file "${active_file.name}"`,
+        "info",
+        "Meridia"
+      );
+
+      dispatch(update_env_vars(variables));
+
+      setTimeout(() => {
+        notificationWorker.removeNotification(varNotifId);
+      }, 4000);
+    };
+
+    const handleVariablesError = (event: any, error: any) => {
+      console.error("Error receiving variables:", error);
+      const errorNotifId = notificationWorker.addNotification(
+        `Error Getting Variables from file "${active_file.name}"`,
+        "error",
+        "Meridia"
+      );
+
+      setTimeout(() => {
+        notificationWorker.removeNotification(errorNotifId);
+      }, 4000);
+    };
+
+    window.electron.ipcRenderer.once("variables-result", handleVariablesResult);
+    window.electron.ipcRenderer.once("variables-error", handleVariablesError);
+  }, [active_file, dispatch]);
 
   useEffect(() => {
-    if (active_file === undefined || active_file === null) {
-      runRef.current.disabled = true;
-    } else {
-      runRef.current.disabled = false;
+    if (runRef.current) {
+      runRef.current.disabled = !active_file;
     }
-  }, [runRef, active_file]);
+  }, [active_file]);
 
-  const handleMenuClick = (menuId: string) => {
-    window.electron.ipcRenderer.send("menu-click", menuId);
-  };
-
-  window.electron.ipcRenderer.on("run-current-file", () => {
-    handleRun();
-  });
+  useEffect(() => {
+    window.electron.ipcRenderer.on("run-current-file", handleRun);
+    return () => {
+      window.electron.ipcRenderer.removeListener("run-current-file", handleRun);
+    };
+  }, [handleRun]);
 
   const toggleSidebar = useCallback(
-    debounce(() => {
-      dispatch(update_sidebar_active(!sidebar_active));
-    }, 50),
+    debounce(() => dispatch(update_sidebar_active(!sidebar_active)), 50),
     [sidebar_active]
   );
 
   const toggleRightPanel = useCallback(
-    debounce(() => {
-      dispatch(update_right_panel_active(!right_sidebar_active));
-    }, 50),
+    debounce(
+      () => dispatch(update_right_panel_active(!right_sidebar_active)),
+      50
+    ),
     [right_sidebar_active]
   );
 
   const toggleBottomPanel = useCallback(
-    debounce(({ state }: { state?: any }) => {
-      if (state) {
-        dispatch(update_bottom_panel_active(state));
-      } else {
-        dispatch(update_bottom_panel_active(!bottom_panel_active));
-      }
+    debounce(({ state }) => {
+      dispatch(update_bottom_panel_active(state ?? !bottom_panel_active));
     }, 50),
     [bottom_panel_active]
   );
 
   useEffect(() => {
-    const openTerminal = () => {
-      if (bottom_panel_active === true && current_bottom_tab === 2) {
+    const openPanelHandler = (tab: any) => {
+      if (bottom_panel_active && current_bottom_tab === tab) {
         toggleBottomPanel({ state: false });
       } else {
         toggleBottomPanel({ state: true });
-        dispatch(update_current_bottom_tab(2));
+        dispatch(update_current_bottom_tab(tab));
       }
     };
 
-    window.electron.ipcRenderer.on("open-terminal", openTerminal);
+    window.electron.ipcRenderer.on("open-terminal", () => openPanelHandler(2));
+    window.electron.ipcRenderer.on("open-output", () => openPanelHandler(1));
+    window.electron.ipcRenderer.on("open-bottom-panel", () =>
+      dispatch(update_bottom_panel_active(!bottom_panel_active))
+    );
+    window.electron.ipcRenderer.on("open-sidebar", toggleSidebar);
+    window.electron.ipcRenderer.on("open-right-panel", toggleRightPanel);
 
     return () => {
-      window.electron.ipcRenderer.removeListener("open-terminal", openTerminal);
+      window.electron.ipcRenderer.removeAllListeners("open-terminal");
+      window.electron.ipcRenderer.removeAllListeners("open-output");
+      window.electron.ipcRenderer.removeAllListeners("open-bottom-panel");
+      window.electron.ipcRenderer.removeAllListeners("open-sidebar");
+      window.electron.ipcRenderer.removeAllListeners("open-right-panel");
     };
-  }, [dispatch]);
+  }, [
+    dispatch,
+    bottom_panel_active,
+    current_bottom_tab,
+    toggleSidebar,
+    toggleRightPanel,
+  ]);
 
   useEffect(() => {
-    const openOutput = () => {
-      if (bottom_panel_active && current_bottom_tab === 1) {
-        toggleBottomPanel({ state: false });
-      } else {
-        toggleBottomPanel({ state: true });
-        dispatch(update_current_bottom_tab(1));
-      }
-    };
+    const handleMaximized = () => setIsMaximized(true);
+    const handleRestored = () => setIsMaximized(false);
 
-    window.electron.ipcRenderer.on("open-output", openOutput);
-
-    return () => {
-      window.electron.ipcRenderer.removeListener("open-output", openOutput);
-    };
-  }, [dispatch]);
-
-  useEffect(() => {
-    window.electron.ipcRenderer.on("open-bottom-panel", () => {
-      dispatch(update_bottom_panel_active(bottom_panel_active ? false : true));
-    });
-
-    return () =>
-      window.electron.ipcRenderer.removeListener(
-        "open-bottom-panel",
-        update_bottom_panel_active
-      );
-  });
-
-  useEffect(() => {
-    window.electron.ipcRenderer.on("open-sidebar", () => {
-      toggleSidebar();
-    });
-
-    return () =>
-      window.electron.ipcRenderer.removeListener("open-sidebar", toggleSidebar);
-  });
-
-  useEffect(() => {
-    window.electron.ipcRenderer.on("open-right-panel", () => {
-      toggleRightPanel();
-    });
-
-    return () =>
-      window.electron.ipcRenderer.removeListener(
-        "open-right-panel",
-        toggleRightPanel
-      );
-  });
-
-  useEffect(() => {
-    window.electron.ipcRenderer.on("window-changed-to-maximized", () => {
-      setIsMaximized(true);
-    });
-
-    window.electron.ipcRenderer.on("window-changed-to-restore", () => {
-      setIsMaximized(false);
-    });
+    window.electron.ipcRenderer.on(
+      "window-changed-to-maximized",
+      handleMaximized
+    );
+    window.electron.ipcRenderer.on("window-changed-to-restore", handleRestored);
 
     return () => {
       window.electron.ipcRenderer.removeListener(
         "window-changed-to-maximized",
-        setIsMaximized
+        handleMaximized
       );
       window.electron.ipcRenderer.removeListener(
         "window-changed-to-restore",
-        setIsMaximized
+        handleRestored
       );
     };
   }, []);
 
-  const handleWindowAction = (action: string) => {
+  const handleWindowAction = (action: any) => {
     window.electron.ipcRenderer.invoke(action, "");
   };
+
+  const handleMenuClick = useCallback((menuId: string) => {
+    window.electron.ipcRenderer.send("menu-click", menuId);
+  }, []);
 
   return (
     <div className="header-wrapper">
@@ -316,15 +304,11 @@ export default function Header() {
       <div className="controls">
         <Tooltip text="Run ( F12 )">
           <button onClick={handleRun} ref={runRef} className="run-tool">
-            <CaretRightOutlined
-              style={{
-                fontSize: "24px",
-              }}
-            />
+            <CaretRightOutlined style={{}} />
           </button>
         </Tooltip>
 
-        <button onClick={() => toggleBottomPanel({ state: null })}>
+        <button onClick={() => toggleBottomPanel({ state: null })} style={{}}>
           {bottom_panel_active ? (
             <Tooltip text="Toggle Panel ( Ctrl + ` )" position="left">
               <PanelBottom />
@@ -336,7 +320,7 @@ export default function Header() {
           )}
         </button>
 
-        <button onClick={toggleSidebar}>
+        <button onClick={toggleSidebar} style={{}}>
           {sidebar_active ? (
             <Tooltip text="Toggle Primary Sidebar ( Ctrl + B )" position="left">
               <PanelLeft />
@@ -348,7 +332,12 @@ export default function Header() {
           )}
         </button>
 
-        <button onClick={toggleRightPanel}>
+        <button
+          onClick={toggleRightPanel}
+          style={{
+            marginRight: "60px",
+          }}
+        >
           {right_sidebar_active ? (
             <Tooltip
               text="Toggle Right Panel ( Ctrl + Alt + B )"

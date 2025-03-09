@@ -4,13 +4,16 @@ import { MainContext, path_join } from "../../../helpers/functions";
 import {
   update_active_file,
   update_active_files,
+  update_sidebar_active,
 } from "../../../helpers/state-manager";
 import { IFolderStructure, TActiveFile } from "../../../helpers/types";
 import { store } from "../../../helpers/store";
 import useTree from "../../../custom-hooks/use-file-tree";
+import Tooltip from "../../../../support/ui-kit/tooltip/Tooltip";
 import FileTree from "./fileTree";
+import { CloseOutlined } from "@ant-design/icons/lib";
 
-const Navigator = React.memo((props: any) => {
+const Folders = React.memo((props: any) => {
   const folder_structure = useAppSelector(
     (state) => state.main.folder_structure
   );
@@ -31,8 +34,9 @@ const Navigator = React.memo((props: any) => {
         "Folder structure is empty, initializing default structure."
       );
     } else {
-      console.log("found folder", folder_structure);
       setFileTree(sortFolderStructure(folder_structure));
+
+      window.electron.set_folder_structure(folder_structure);
     }
   }, [folder_structure]);
 
@@ -132,6 +136,12 @@ const Navigator = React.memo((props: any) => {
         )
       )
     );
+
+    window.electron.set_folder_structure(
+      sortFolderStructure(
+        sortFolderStructure(updateNode(fileTreeData, id, newName))
+      )
+    );
   };
 
   const handleDelete = (id: any, type: string, path: string) => {
@@ -149,10 +159,7 @@ const Navigator = React.memo((props: any) => {
         rootPath: fileTreeData.root,
       });
     }
-
-    // dispatch(
-    //   update_active_files(active_files.filter((tab) => tab.path !== path))
-    // );
+    window.electron.set_folder_structure(sortFolderStructure(updatedTree));
   };
 
   const handleAddFile = (
@@ -193,6 +200,10 @@ const Navigator = React.memo((props: any) => {
       fileName: newFile.name,
       rootPath: fileTreeData.root,
     });
+
+    window.electron.set_folder_structure(
+      sortFolderStructure(insertNode(fileTreeData, parentId, newFile))
+    );
   };
 
   const handleAddFolder = (
@@ -220,6 +231,10 @@ const Navigator = React.memo((props: any) => {
       fileName: newFolder.name,
       rootPath: fileTreeData.root,
     });
+
+    window.electron.set_folder_structure(
+      sortFolderStructure(insertNode(fileTreeData, parentId, newFolder))
+    );
   };
 
   const sortFolderStructure: any = (folder_structure: any) => {
@@ -241,9 +256,16 @@ const Navigator = React.memo((props: any) => {
 
   return (
     <div className="folder-tree">
-      <div className="explorer-content-wrapper">
+      <div className="folders-content-wrapper">
         <div className="content-list-outer-container">
-          <p>FOLDERS</p>
+          <div className="title">
+            <p>FOLDERS</p>
+            <Tooltip text="Hide" position="left">
+              <button onClick={() => dispatch(update_sidebar_active(false))}>
+                <CloseOutlined />
+              </button>
+            </Tooltip>
+          </div>
           <FileTree
             handleDelete={handleDelete}
             handleAddFile={handleAddFile}
@@ -258,4 +280,4 @@ const Navigator = React.memo((props: any) => {
   );
 });
 
-export default Navigator;
+export default Folders;

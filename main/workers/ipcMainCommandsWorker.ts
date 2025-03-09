@@ -9,7 +9,12 @@ import {
   handle_rename,
 } from "../actions/fileActions";
 import { get_file_content } from "../electron/functions";
-import { refresh_window, set_folder } from "./functionsWorker";
+import {
+  refresh_window,
+  set_folder,
+  set_folder_structure,
+} from "./functionsWorker";
+import { IFolderStructure } from "../../src/helpers/types";
 
 export function RegisterIpcCommandsWorker({ store }: { store: any }) {
   registerIpcMainCommand("get-folder", async () =>
@@ -21,7 +26,7 @@ export function RegisterIpcCommandsWorker({ store }: { store: any }) {
   );
 
   registerIpcMainCommand("set-folder", (_event, folder: string) =>
-    set_folder({ folder })
+    set_folder({ folder: folder, store: store })
   );
 
   registerIpcMainCommand("create-folder", (_event, data) =>
@@ -31,7 +36,7 @@ export function RegisterIpcCommandsWorker({ store }: { store: any }) {
   registerIpcMainCommand("open-set-folder", () => open_set_folder());
 
   registerIpcMainCommand("refresh-window", (_event, folder) =>
-    refresh_window({ folder })
+    refresh_window({ folder: folder, store: store })
   );
 
   registerIpcMainCommand("create-folder", (_event, data) =>
@@ -65,4 +70,10 @@ export function RegisterIpcCommandsWorker({ store }: { store: any }) {
   registerIpcMainCommand("send-tools-data", (_event, data) => {
     mainWindow.webContents.send("update-tools-data", data);
   });
+
+  registerIpcMainCommand(
+    "set-folder-structure",
+    (_event, structure: IFolderStructure) =>
+      set_folder_structure({ store: store, structure: structure })
+  );
 }

@@ -9,7 +9,7 @@ import {
 } from "../../helpers/state-manager";
 import { store } from "../../helpers/store";
 import oneDark from "../../../theme/oneDark.json";
-import pythonLangData from "../../../extensions/languages/python/python.json";
+import pythonLangData from "../../../support/languages/python/python.json";
 import { App } from "./app";
 import * as monaco from "monaco-editor";
 
@@ -133,9 +133,6 @@ const MainComponent = React.memo((props: any) => {
             mouseWheelZoom: settings.mouseWheelZoom,
             contextmenu: settings.contextmenu,
             bracketPairColorization: settings.bracketPairColorization,
-            screenReaderAnnounceInlineSuggestion:
-              settings.screenReaderAnnounceInlineSuggestion,
-            parameterHints: settings.parameterHints,
           }
         );
       }

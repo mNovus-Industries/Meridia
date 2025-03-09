@@ -14,7 +14,7 @@ import {
 
 import "./styling/index.css";
 import "./styling/table.css";
-import Tooltip from "../../../extensions/ui-kit/tooltip/Tooltip";
+import Tooltip from "../../../support/ui-kit/tooltip/Tooltip";
 
 export const Tools = () => {
   let data = useAppSelector((state) => state.main.toolsdata);

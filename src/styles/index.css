@@ -98,64 +98,6 @@ body {
   background: var(--main-bg);
 }
 
-.wrapper-component > .footer-section {
-  border-top: 0.3px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-}
-
-.wrapper-component > .footer-section > div {
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  color: var(--sidebar-text-color);
-}
-
-.wrapper-component > .footer-section > div svg {
-  width: 10px;
-  height: 10px;
-}
-
-.wrapper-component > .footer-section > div > div {
-  display: flex;
-  align-items: center;
-  padding: 0px 8px;
-}
-
-.wrapper-component > .footer-section > div > div > span {
-  display: flex;
-  align-items: center;
-  padding: 3px;
-  cursor: pointer;
-}
-
-.wrapper-component > .footer-section > div > div > span:hover {
-  background: var(--file-list-bg);
-}
-
-.wrapper-component > .footer-section .remove-item {
-  width: 20px;
-  height: 100%;
-  background-color: var(--blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wrapper-component > .footer-section .remove-item svg,
-.wrapper-component > .footer-section .bigger-icon svg {
-  width: 13px !important;
-  height: 13px !important;
-}
-
-.wrapper-component > .footer-section .remove-item svg path {
-  fill: white;
-}
-
-.wrapper-component > .footer-section > div svg path {
-  fill: var(--sidebar-text-color);
-}
-
 .wrapper-component > div:nth-child(2) {
   display: grid;
   grid-template-areas: "sidebar content";
@@ -273,7 +215,7 @@ body {
   display: flex;
 }
 
-.wrapper-component > div:nth-child(2) .sidebar-section > .explorer-list {
+.wrapper-component > div:nth-child(2) .sidebar-section > .folders-list {
   flex-grow: 1;
   overflow-x: hidden;
   overflow-y: hidden !important;
@@ -524,44 +466,32 @@ body {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-}
-
-.no-selected-files svg {
-  width: 40%;
-  height: 40%;
-}
-
-.no-selected-files svg path {
-  fill: #161616;
 }
 
 .no-selected-files span {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  font-size: 13px;
+  align-items: center;
+  width: 350px;
+  font-size: 14px;
   padding: 6px 12px;
-  border-radius: 6px;
 }
 
-.no-selected-files span code {
+.no-selected-files code {
   display: flex;
   align-items: center;
   gap: 4px;
-  border-radius: 8px;
-  padding: 6px 4px;
+  font-weight: bold;
 }
 
-.no-selected-files span code kbd {
+.no-selected-files kbd {
   background: #222;
   padding: 4px 6px;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  font-weight: bold;
 }
 
 .new-file-item .file-name {
@@ -597,18 +527,40 @@ body {
   padding: 8px 10px;
 }
 
-.folder-tree .explorer-content-wrapper {
+.folder-tree .folders-content-wrapper {
   height: 100%;
   display: grid !important;
 }
 
-.folder-tree .explorer-content-wrapper .content-list-outer-container {
+.folder-tree .folders-content-wrapper .content-list-outer-container {
   display: flex;
   flex-direction: column;
 }
 
-.folder-tree .explorer-content-wrapper > div:not(:first-child),
-.content-list-outer-container > p {
+.folder-tree .folders-content-wrapper > div:not(:first-child),
+.content-list-outer-container .title {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+}
+
+.folder-tree .folders-content-wrapper > div:not(:first-child),
+.content-list-outer-container .title button {
+  background: transparent;
+  font-size: 16px;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.folder-tree .folders-content-wrapper > div:not(:first-child),
+.content-list-outer-container .title button:hover {
+  background: var(--file-list-bg);
+}
+
+.folder-tree .folders-content-wrapper > div:not(:first-child),
+.content-list-outer-container .title > p {
   color: var(--sidebar-text-color);
   font-size: 16px;
   text-transform: uppercase;
@@ -616,15 +568,15 @@ body {
   padding: 10px 12px;
 }
 
-.folder-tree .explorer-content-wrapper > div:not(:first-child) > svg,
-.content-list-outer-container > div:first-child > svg {
+.folder-tree .folders-content-wrapper > div:not(:first-child) > svg,
+.content-list-outer-container > .title > svg {
   width: 15px;
   height: 15px;
   margin-right: 6px;
 }
 
-.folder-tree .explorer-content-wrapper > div:not(:first-child) > svg path,
-.content-list-outer-container > div:first-child > svg path {
+.folder-tree .folders-content-wrapper > div:not(:first-child) > svg path,
+.content-list-outer-container > .title > svg path {
   fill: var(--sidebar-text-color);
 }
 

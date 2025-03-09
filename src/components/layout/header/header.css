@@ -46,7 +46,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 8px;
+  padding: 4px 2px;
   border-radius: 4px;
 }
 
@@ -116,6 +116,7 @@
   display: flex;
   align-items: center;
   margin-left: auto;
+  gap: 12px;
 }
 
 .controls .run-tool {
@@ -129,11 +130,8 @@
 }
 
 .controls .window-controls button svg {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  visibility: visible;
-  opacity: 1;
+  width: 24px;
+  height: auto;
 }
 
 .controls button {
@@ -143,6 +141,7 @@
   border-radius: 6px;
   font-size: 20px;
   cursor: pointer;
+  transition: background 0.2s ease-in-out;
 }
 
 .controls button:hover {

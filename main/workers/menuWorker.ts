@@ -1,6 +1,8 @@
 import { ipcMain, Menu, MenuItem } from "electron";
 import {
+  handleNewFile,
   handleOpenBottomPanel,
+  handleOpenCommandPalette,
   handleOpenFile,
   handleOpenFolder,
   handleOpenMeridiaStudio,
@@ -22,7 +24,7 @@ export function RegisterMenu({ store }: { store: any }) {
         {
           label: "New File",
           accelerator: "Ctrl+N",
-          click: handleOpenFile,
+          click: handleNewFile,
         },
         { type: "separator" },
         {
@@ -88,7 +90,11 @@ export function RegisterMenu({ store }: { store: any }) {
     {
       label: "View",
       submenu: [
-        { label: "Command Palette" },
+        {
+          label: "Command Palette",
+          accelerator: "Ctrl + Shift + P",
+          click: handleOpenCommandPalette,
+        },
         { label: "Open View" },
         { type: "separator" },
         {

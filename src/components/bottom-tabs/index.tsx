@@ -4,7 +4,7 @@ import {
   update_bottom_panel_active,
 } from "../../helpers/state-manager";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { Tabs } from "../../../extensions/ui-kit/index";
+import { Tabs } from "../../../support/ui-kit/index";
 import Output from "./output";
 import { Terminal } from "./terminal";
 import { CloseOutlined } from "@ant-design/icons/lib";

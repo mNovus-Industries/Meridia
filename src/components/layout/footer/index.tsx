@@ -1,6 +1,15 @@
 import React from "react";
 import { useAppSelector } from "../../../helpers/hooks";
 import { get_file_types } from "../../../helpers/functions";
+import { notificationWorker } from "../../../../main/workers/notificationWorker";
+import { ReactComponent as BellIcon } from "../../../assets/svg/bell-dot.svg";
+
+import "./index.css";
+import {
+  CloseCircleOutlined,
+  CloseOutlined,
+  InfoCircleFilled,
+} from "@ant-design/icons/lib";
 
 const FooterComponent = React.memo(() => {
   const folder_structure = useAppSelector(
@@ -10,22 +19,49 @@ const FooterComponent = React.memo(() => {
   const active_file = useAppSelector((state) => state.main.active_file);
   const ui = useAppSelector((state) => state.main.ui);
 
+  const [notificationModelVisible, setNotificationModelVisible] =
+    React.useState(false);
+
+  const [notifications, setNotifications] = React.useState(
+    notificationWorker.getNotifications()
+  );
+
+  const footerRef = React.useRef(null);
+  const [footerHeight, setFooterHeight] = React.useState(0);
+
+  React.useEffect(() => {
+    if (footerRef.current) {
+      setFooterHeight(footerRef.current.clientHeight);
+    }
+  }, [footerRef.current]);
+
+  React.useEffect(() => {
+    const updateNotifications = () => {
+      setNotifications(notificationWorker.getNotifications());
+    };
+
+    notificationWorker.subscribe(updateNotifications);
+
+    updateNotifications();
+
+    return () => {
+      notificationWorker.unsubscribe(updateNotifications);
+    };
+  }, []);
+
   const extensionItem = ui.footer.find((item) => item.type === "extensions");
 
   return (
     <div
       className="footer-section"
       style={{
-        width: "100%",
-        zIndex: 100,
         borderTop: "1px solid var(--main-border-color)",
         display: "flex",
         justifyContent: "space-between",
         padding: "4px 8px",
-        overflow: "hidden",
-        flexWrap: "wrap",
         alignItems: "center",
       }}
+      ref={footerRef}
     >
       {ui.footer.some((item) => item.type === "project-name") && (
         <div>
@@ -59,6 +95,56 @@ const FooterComponent = React.memo(() => {
               {get_file_types(active_file.name)}
             </div>
           )}
+
+        <div>
+          <span onClick={() => setNotificationModelVisible((prev) => !prev)}>
+            <BellIcon />
+          </span>
+
+          {notificationModelVisible && (
+            <div
+              className="notification-model"
+              style={{ bottom: `${footerHeight + 10}px` }}
+            >
+              <div className="title">
+                <p>NOTIFICATIONS</p>
+                <button onClick={() => setNotificationModelVisible(false)}>
+                  <CloseOutlined />
+                </button>
+              </div>
+
+              <div className="notifications-wrapper">
+                {notifications.map((notif) => (
+                  <div key={notif.id} className={`notification ${notif.type}`}>
+                    <div className="section">
+                      <div className="info-section">
+                        {notif.type === "info" ? (
+                          <InfoCircleFilled />
+                        ) : (
+                          <CloseCircleOutlined />
+                        )}
+                        <p>{notif.message}</p>
+                      </div>
+                      <div className="actions">
+                        <button
+                          onClick={() =>
+                            notificationWorker.removeNotification(notif.id)
+                          }
+                        >
+                          <CloseOutlined />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="section">
+                      <div className="source">From {notif.source}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
