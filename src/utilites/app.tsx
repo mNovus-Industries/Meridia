@@ -9,17 +9,11 @@ import { useAppDispatch, useAppSelector } from "../helpers/hooks";
 import router from "../helpers/router";
 import { MainContext } from "../helpers/functions";
 
-import {
-  IEditorSettings,
-  IFolderStructure,
-  IUI,
-  IUIState,
-} from "../helpers/types";
+import { IEditorSettings, IFolderStructure, IUIState } from "../helpers/types";
 
 import {
   set_folder_structure,
   update_settings,
-  update_ui,
   update_ui_state,
 } from "../helpers/state-manager";
 
@@ -65,27 +59,11 @@ const App = React.memo((props: any) => {
     }
   };
 
-  const { handle_set_editor } = React.useContext(MainContext) || {};
-
-  const handleSetEditor = React.useCallback(
-    async (branch_name: string, full_path: string) => {
-      console.log("branch", branch_name, full_path);
-      const content = await window.electron.get_file_content(full_path);
-
-      if (typeof handle_set_editor === "function") {
-        handle_set_editor({ name: branch_name, path: full_path, content });
-      } else {
-        console.error("handle_set_editor is not defined");
-      }
-    },
-    [handle_set_editor]
-  );
-
   const startup = React.useCallback(async () => {
-    const ui = (await window.electron.get_ui()) as IUI;
+    // const ui = (await window.electron.get_ui()) as IUI;
     const folder = (await window.electron.get_folder()) as IFolderStructure;
     const settings = (await window.electron.get_settings()) as IEditorSettings;
-    const state = (await window.electron.get_ui_state()) as IUIState;
+    // const state = (await window.electron.get_ui_state()) as IUIState;
 
     if (!localStorage.getItem("mnovus_meridia")) {
       window.electron.set_settings(settingsDe);
@@ -95,12 +73,12 @@ const App = React.memo((props: any) => {
 
     if (folder) dispatch(set_folder_structure(folder));
     if (settings) dispatch(update_settings(settings));
-    if (state) dispatch(update_ui_state(state));
-    if (ui) dispatch(update_ui(ui));
-    if (state) {
-      if (state.active_file) {
-      }
-    }
+    // if (state) dispatch(update_ui_state(state));
+    // if (ui) dispatch(update_ui(ui));
+    // if (state) {
+    //   if (state.active_file) {
+    //   }
+    // }
 
     RegisterPluginWorker();
   }, [dispatch]);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../../helpers/hooks";
 import { get_file_types } from "../../../helpers/functions";
 import { notificationWorker } from "../../../../main/workers/notificationWorker";
@@ -17,31 +17,22 @@ const FooterComponent = React.memo(() => {
   );
   const editor_indent = useAppSelector((state) => state.main.indent);
   const active_file = useAppSelector((state) => state.main.active_file);
-  const ui = useAppSelector((state) => state.main.ui);
 
   const [notificationModelVisible, setNotificationModelVisible] =
-    React.useState(false);
-
-  const [notifications, setNotifications] = React.useState(
+    useState(false);
+  const [notifications, setNotifications] = useState(
     notificationWorker.getNotifications()
   );
 
-  const footerRef = React.useRef(null);
-  const [footerHeight, setFooterHeight] = React.useState(0);
+  const footerRef = useRef(null);
+  const notificationRef = useRef(null);
 
-  React.useEffect(() => {
-    if (footerRef.current) {
-      setFooterHeight(footerRef.current.clientHeight);
-    }
-  }, [footerRef.current]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     const updateNotifications = () => {
       setNotifications(notificationWorker.getNotifications());
     };
 
     notificationWorker.subscribe(updateNotifications);
-
     updateNotifications();
 
     return () => {
@@ -49,7 +40,27 @@ const FooterComponent = React.memo(() => {
     };
   }, []);
 
-  const extensionItem = ui.footer.find((item) => item.type === "extensions");
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target) &&
+        event.target.closest(".bell-icon") === null
+      ) {
+        setNotificationModelVisible(false);
+      }
+    };
+
+    if (notificationModelVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [notificationModelVisible]);
 
   return (
     <div
@@ -63,48 +74,43 @@ const FooterComponent = React.memo(() => {
       }}
       ref={footerRef}
     >
-      {ui.footer.some((item) => item.type === "project-name") && (
-        <div>
-          <span>
-            {active_file?.name ||
-              folder_structure?.name?.split(/\/|\\/).at(-1) ||
-              "main"}
-          </span>
-        </div>
-      )}
+      <div>
+        <span>
+          {active_file?.name ||
+            folder_structure?.name?.split(/\/|\\/).at(-1) ||
+            "main"}
+        </span>
+      </div>
 
       <div style={{ display: "flex", gap: "10px" }}>
-        {ui.footer.some((item) => item.type === "editor-indent") && (
-          <div>
-            Ln {editor_indent.line}, Col {editor_indent.column} (
-            {editor_indent.selected} selected)
+        <div>
+          Ln {editor_indent.line}, Col {editor_indent.column} (
+          {editor_indent.selected} selected)
+        </div>
+
+        <div>Spaces: 4</div>
+
+        <div>UTF-8</div>
+
+        {active_file?.name && (
+          <div style={{ textTransform: "capitalize" }}>
+            {get_file_types(active_file.name)}
           </div>
         )}
 
-        {ui.footer.some((item) => item.type === "editor-spaces") && (
-          <div>Spaces: 4</div>
-        )}
-
-        {ui.footer.some((item) => item.type === "editor-utf") && (
-          <div>UTF-8</div>
-        )}
-
-        {ui.footer.some((item) => item.type === "selected-file-language") &&
-          active_file?.name && (
-            <div style={{ textTransform: "capitalize" }}>
-              {get_file_types(active_file.name)}
-            </div>
-          )}
-
         <div>
-          <span onClick={() => setNotificationModelVisible((prev) => !prev)}>
+          <span
+            className="bell-icon"
+            onClick={() => setNotificationModelVisible((prev) => !prev)}
+          >
             <BellIcon />
           </span>
 
           {notificationModelVisible && (
             <div
+              ref={notificationRef}
               className="notification-model"
-              style={{ bottom: `${footerHeight + 10}px` }}
+              style={{ bottom: `50px` }}
             >
               <div className="title">
                 <p>NOTIFICATIONS</p>

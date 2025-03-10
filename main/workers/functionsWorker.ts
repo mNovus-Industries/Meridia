@@ -1,4 +1,5 @@
 import { dialog } from "electron";
+import path from "path";
 import { mainWindow, SELECTED_FOLDER_STORE_NAME } from "..";
 import { get_files } from "../electron/get_files";
 import { registerCommand } from "./commandWorker";
@@ -16,7 +17,7 @@ export async function handleOpenFile() {
   if (!canceled && filePaths.length) {
     mainWindow.webContents.send("new-file-opened", {
       path: filePaths[0],
-      fileName: filePaths[0].split("/").pop(),
+      fileName: path.basename(filePaths[0]),
     });
   }
 }

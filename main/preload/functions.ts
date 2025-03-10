@@ -3,7 +3,6 @@ import { ipcRenderer } from "electron";
 import {
   IEditorSettings,
   IFolderStructure,
-  IUI,
   IUIState,
 } from "../../src/helpers/types";
 
@@ -51,16 +50,8 @@ export const renderer = {
     ipcRenderer.send("set-ui-state", state);
   },
 
-  get_ui: async () => {
-    const ui = await ipcRenderer.invoke("get-ui");
-    return ui;
-  },
   clear_ui: () => {
     ipcRenderer.send("clear-ui");
-  },
-
-  set_ui: (ui: IUI) => {
-    ipcRenderer.send("set-ui", ui);
   },
 
   get_file_content: async (path: string) => {

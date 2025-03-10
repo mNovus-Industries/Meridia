@@ -14,9 +14,10 @@ export const VariableSection = () => {
   const vars = useAppSelector((state) => state.main.env_vars);
 
   // Convert vars object to an array for the table
-  const items = Object.entries(vars).map(([key, value]) => ({
+  const items = Object.entries(vars).map(([key, data]: any) => ({
     name: key,
-    value: value,
+    type: data.type,
+    value: data.value,
   }));
 
   const columns = [
@@ -24,6 +25,11 @@ export const VariableSection = () => {
       columnId: "name",
       renderHeaderCell: () => <>Name</>,
       renderCell: (item: any) => <TableCell>{item.name}</TableCell>,
+    }),
+    createTableColumn({
+      columnId: "type",
+      renderHeaderCell: () => <>Type</>,
+      renderCell: (item: any) => <TableCell>{item.type}</TableCell>,
     }),
     createTableColumn({
       columnId: "value",

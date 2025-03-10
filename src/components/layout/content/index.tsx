@@ -123,9 +123,7 @@ const ContentSection = React.memo((props: any) => {
 
   return (
     <div className="content-section">
-      {Object.keys(folder_structure)?.length == 0 && (
-        <div className="default-screen"></div>
-      )}
+      {Object.keys(folder_structure)?.length == 0 && <div></div>}
       {Object.keys(folder_structure)?.length > 0 &&
       active_files?.length == 0 ? (
         <div className="no-selected-files">

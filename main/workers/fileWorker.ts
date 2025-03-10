@@ -26,8 +26,6 @@ export const UI_STATE_JSON_PATH = path.join(
   "ui_state.json"
 );
 
-export const UI_JSON_PATH = path.join(PUBLIC_FOLDER_PATH, "ui.json");
-
 export const STORAGE_JSON_PATH = path.join(PUBLIC_FOLDER_PATH, "storage.json");
 
 export const MERIDIA_STUDIO_VAR_PATH = path.join(
@@ -50,9 +48,6 @@ export function RegisterFileWorker() {
     }
   );
 
-  if (!fs.existsSync(UI_JSON_PATH))
-    fs.writeFileSync(UI_JSON_PATH, JSON.stringify({}));
-
   if (!fs.existsSync(STORAGE_JSON_PATH))
     fs.writeFileSync(STORAGE_JSON_PATH, JSON.stringify({}));
 
@@ -66,19 +61,6 @@ export function RegisterFileWorker() {
   ipcMain.handle("get-settings", async () => {
     try {
       return JSON.parse(fs.readFileSync(SETTINGS_JSON_PATH, "utf-8"));
-    } catch (error) {
-      return {};
-    }
-  });
-
-  ipcMain.on("clear-ui", () => fs.writeFileSync(UI_JSON_PATH, "{}"));
-  ipcMain.on("set-ui", (_, ui: any) =>
-    fs.writeFileSync(UI_JSON_PATH, JSON.stringify(ui))
-  );
-
-  ipcMain.handle("get-ui", async () => {
-    try {
-      return JSON.parse(fs.readFileSync(UI_JSON_PATH, "utf-8"));
     } catch (error) {
       return {};
     }

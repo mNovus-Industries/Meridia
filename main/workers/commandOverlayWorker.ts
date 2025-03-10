@@ -17,7 +17,7 @@ import {
 const commandHandlers: any = {
   new: handleNewFile,
   open: handleOpenFile,
-  "open-folder": (store: any) => handleOpenFolder({ store }),
+  "open-folder": (store: any) => handleOpenFolder({ store: store }),
   save: handleSaveCurrentFile,
   settings: handleOpenSettings,
   "meridia-studio": handleOpenMeridiaStudio,
@@ -29,7 +29,7 @@ const commandHandlers: any = {
   run: handleRun,
 };
 
-export function RegisterCommandOverlayWorker({ store }: {store: any}) {
+export function RegisterCommandOverlayWorker({ store }: { store: any }) {
   ipcMain.on("execute-command", (_, commandId) => {
     const handler = commandHandlers[commandId];
     if (handler) {

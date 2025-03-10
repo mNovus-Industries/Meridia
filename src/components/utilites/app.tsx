@@ -43,8 +43,6 @@ export const App = () => {
     (state) => state.main.bottom_panel_active
   );
 
-  const ui = useAppSelector((state) => state.main.ui);
-
   const [activeItem, setActiveItem] = useState<string | null>("Folders");
   const [pluginContent, setPluginContent] = useState<React.ReactNode | null>(
     null
@@ -134,7 +132,11 @@ export const App = () => {
       );
   }, []);
 
-  const handleClick = (item: any) => {
+  const handleClick = ({
+    item,
+  }: {
+    item: { content: string; name: string };
+  }) => {
     if (item.content === "settings") return openSettings();
     if (item.content === "mstudio") return openMeridiaStudio();
 
@@ -164,26 +166,44 @@ export const App = () => {
       <Header />
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
         <div className="sidebar" style={{ background: "#363636" }}>
-          {["top", "bottom"].map((position) => (
-            <div key={position} className={position}>
-              {ui.sidebar
-                .filter((item) => item.position === position)
-                .map((item, index) => (
-                  <Tooltip
-                    key={index}
-                    text={`${item.tooltip} (${item.shortcut})`}
-                    position="right"
-                  >
-                    <div
-                      className={`sidebar-item ${activeItem === item.name && sidebarActive ? "active" : ""}`}
-                      onClick={() => handleClick(item)}
-                    >
-                      {iconMap[item.name] || <FolderOutlined />}
-                    </div>
-                  </Tooltip>
-                ))}
-            </div>
-          ))}
+          <div className="top">
+            <Tooltip text="Folders (Ctrl+Shift+F)" position="right">
+              <div
+                className={`sidebar-item ${activeItem === "Folders" ? "active" : ""}`}
+                onClick={() =>
+                  handleClick({ item: { name: "Folders", content: "content" } })
+                }
+              >
+                {iconMap["Folders"]}
+              </div>
+            </Tooltip>
+          </div>
+
+          <div className="bottom">
+            <Tooltip text="Settings (Ctrl+Shift+S)" position="right">
+              <div
+                className={`sidebar-item ${activeItem === "Settings" ? "active" : ""}`}
+                onClick={() =>
+                  handleClick({
+                    item: { name: "Settings", content: "settings" },
+                  })
+                }
+              >
+                {iconMap["Settings"]}
+              </div>
+            </Tooltip>
+
+            <Tooltip text="Meridia Studio (Ctrl+Shift+M)" position="right">
+              <div
+                className={`sidebar-item ${activeItem === "Meridia Studio" ? "active" : ""}`}
+                onClick={() =>
+                  handleClick({ item: { name: "MStudio", content: "mstudio" } })
+                }
+              >
+                {iconMap["Meridia Studio"]}
+              </div>
+            </Tooltip>
+          </div>
         </div>
 
         <Splitter

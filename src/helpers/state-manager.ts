@@ -10,7 +10,6 @@ import {
   DataPreviewToolsTab,
   IEditorSettings,
   IUIState,
-  IUI,
 } from "./types";
 
 // Define the initial state using that type
@@ -73,33 +72,6 @@ const initialState: IMainState = {
     sidebar_active: true,
     bottom_panel_active: true,
   },
-  ui: {
-    header: [
-      {
-        name: "",
-        type: "",
-        tooltip: "",
-        shortcut: "",
-      },
-    ],
-    sidebar: [
-      {
-        name: "",
-        position: "",
-        tooltip: "",
-        shortcut: "",
-        content: "content",
-      },
-    ],
-    footer: [
-      {
-        name: "",
-        type: "extensions",
-        text: "[editor-indent]",
-        tooltip: "[editor-indent]",
-      },
-    ],
-  } as IUI,
 };
 
 export const mainSlice = createSlice({
@@ -164,9 +136,6 @@ export const mainSlice = createSlice({
     update_ui_state: (state, action: PayloadAction<IUIState>) => {
       state.uiState = action.payload;
     },
-    update_ui: (state, action: PayloadAction<IUI>) => {
-      state.ui = action.payload;
-    },
   },
 });
 
@@ -187,7 +156,6 @@ export const {
   update_output_history,
   update_settings,
   update_ui_state,
-  update_ui,
   update_right_panel_active,
 } = mainSlice.actions;
 

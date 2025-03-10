@@ -35,7 +35,7 @@ export function RegisterMenu({ store }: { store: any }) {
         {
           label: "Open Folder...",
           accelerator: "Ctrl+Shift+O",
-          click: () => handleOpenFolder(store),
+          click: () => handleOpenFolder({ store: store }),
         },
         { type: "separator" },
         {
