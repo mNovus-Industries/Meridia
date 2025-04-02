@@ -132,7 +132,7 @@ When submitting a pull request:
 
 ## Reporting Issues
 
-If you encounter an issue or have an idea for a new feature, feel free to report it via the [Issues Page](https://github.com/Ridit-ManojKhandelwal/Meridia/issues). We strive to respond to all issues within 24 hours.
+If you encounter an issue or have an idea for a new feature, feel free to report it via the [Issues Page](https://github.com/mNovus-Industries/Meridia/issues). We strive to respond to all issues within 24 hours.
 
 ---
 
