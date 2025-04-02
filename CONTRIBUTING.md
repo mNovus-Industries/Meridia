@@ -1,6 +1,6 @@
-# Contributing to Anantam
+# Contributing to Meridia
 
-Thank you for your interest in contributing to **Anantam**! 🎉 We appreciate your help in making it a better IDE. This guide will help you get started with contributing.
+Thank you for your interest in contributing to **Meridia**! 🎉 We appreciate your help in making it a better IDE. This guide will help you get started with contributing.
 
 ## 🛠 How to Contribute
 
@@ -16,8 +16,8 @@ When reporting an issue, include:
 Before making changes, set up Anantam locally:
 
 ```sh
-git clone https://github.com/Ridit-ManojKhandelwal/Anantam.git
-cd anantam
+git clone https://github.com/mNovus-Industries/Meridia.git
+cd Meridia
 yarn install
 yarn start
 ```
@@ -49,6 +49,6 @@ yarn start
 - Update your PR if requested.
 
 ## 📝 License
-By contributing to Anantam, you agree that your code will be licensed under the [MIT License](LICENSE).
+By contributing to Meridia, you agree that your code will be licensed under the [MIT License](LICENSE).
 
 🚀 Happy coding! We appreciate your contributions. 😊
